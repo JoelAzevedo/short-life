@@ -22,13 +22,13 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #0c0b10; col
 
 /* ---------- narration ---------- */
 #narr { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; padding: 0 8vw; text-align: center; }
-#narr .line { font-family: var(--serif); font-size: clamp(22px, 3.1vw, 40px); line-height: 1.35; color: #fff8ef; text-shadow: 0 2px 18px rgba(0,0,0,0.35); opacity: 0; transform: translateY(8px); transition: opacity 1.4s ease, transform 1.6s ease; max-width: 900px; font-weight: 500; }
+#narr .line { font-family: var(--serif); font-size: clamp(22px, 3.1vw, 40px); line-height: 1.35; color: #fff8ef; text-shadow: 0 1px 4px rgba(0,0,0,0.5), 0 2px 24px rgba(0,0,0,0.45); opacity: 0; transform: translateY(8px); transition: opacity 1.4s ease, transform 1.6s ease; max-width: 900px; font-weight: 500; }
 #narr .line.small { font-size: clamp(16px, 2vw, 24px); font-style: italic; opacity: 0; }
 #narr .line.dark { color: var(--ink); text-shadow: 0 1px 12px rgba(255,255,255,0.6); }
 #narr .line.show { opacity: 1; transform: none; }
 #narr .line.out { opacity: 0; transform: translateY(-6px); transition: opacity 1s ease, transform 1s ease; }
 #lower { position: absolute; left: 0; right: 0; bottom: 7vh; display: flex; justify-content: center; pointer-events: none; padding: 0 6vw; }
-#lower .line { font-family: var(--serif); font-style: italic; font-size: clamp(19px, 2.3vw, 30px); color: #fffaf2; text-shadow: 0 1px 3px rgba(0,0,0,0.45), 0 0 24px rgba(0,0,0,0.35); text-align: center; max-width: 880px; opacity: 0; transition: opacity 1.1s ease; line-height: 1.35; }
+#lower .line { font-family: var(--serif); font-style: italic; font-size: clamp(19px, 2.3vw, 30px); color: #fffaf2; text-shadow: 0 1px 3px rgba(0,0,0,0.5); text-align: center; max-width: 880px; opacity: 0; transition: opacity 1.1s ease; line-height: 1.35; background: rgba(28,20,30,0.42); padding: 10px 26px 12px; border-radius: 22px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
 #lower .line.show { opacity: 1; }
 .advance { display: inline-block; margin-left: 10px; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-4px); opacity: 0; animation: bob 1.4s ease-in-out infinite; }
 .ready .advance { opacity: 0.7; }
