@@ -296,6 +296,382 @@
     "category": "path"
   },
   {
+    "apiName": "ACH_PLANTED_TREE",
+    "id": "planted_tree",
+    "displayName": "The Little Tree",
+    "description": "Plant the family tree with Grandpa.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_AGAIN_AGAIN",
+    "id": "again_again",
+    "displayName": "Again. Again. Again.",
+    "description": "Ask for the bedtime story one more time.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_LEMONADE_CANDY",
+    "id": "lemonade_candy",
+    "displayName": "Sugar Rush",
+    "description": "Spend all your lemonade money on candy.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_LEMONADE_JAR",
+    "id": "lemonade_jar",
+    "displayName": "Saving Up",
+    "description": "Put your lemonade money in the jar.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_LEMONADE_THEO",
+    "id": "lemonade_theo",
+    "displayName": "Business Partners",
+    "description": "Spend your lemonade money on Theo.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_KISSED_BETTER",
+    "id": "kissed_better",
+    "displayName": "Kissed Better",
+    "description": "Call for Mom when you scrape your knee.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_DINOSAUR_BANDAGE",
+    "id": "dinosaur_bandage",
+    "displayName": "The T. Rex",
+    "description": "Call for Dad when you scrape your knee.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_FIVE_MORE_MINUTES",
+    "id": "five_more_minutes",
+    "displayName": "Five More Minutes",
+    "description": "Stay out until the very end of a summer day.",
+    "hidden": false,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_SHOOTING_STAR",
+    "id": "shooting_star",
+    "displayName": "Count the Stars",
+    "description": "Count the stars with Dad.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_GOLDEN_MARSHMALLOW",
+    "id": "golden_marshmallow",
+    "displayName": "Patience",
+    "description": "Toast a perfect golden marshmallow.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CRUNCHY_MARSHMALLOW",
+    "id": "crunchy_marshmallow",
+    "displayName": "Crunchy on the Outside",
+    "description": "Set your marshmallow on fire.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_NIGHT_LIGHT",
+    "id": "night_light",
+    "displayName": "Night Light",
+    "description": "Keep the fireflies in a jar overnight.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_PLACES_TO_BE",
+    "id": "places_to_be",
+    "displayName": "Places to Be",
+    "description": "Let the fireflies go.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_FAIRY_DOOR",
+    "id": "fairy_door",
+    "displayName": "Knock Knock",
+    "description": "Find the tiny door at the foot of the cherry tree.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_FIREFLY_KING",
+    "id": "firefly_king",
+    "displayName": "Long Live the King",
+    "description": "Find who moved into your sandcastle.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_MET_SAM",
+    "id": "met_sam",
+    "displayName": "Mint Chocolate Chip",
+    "description": "Share the last cone with Sam.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_OLD_FRIEND",
+    "id": "old_friend",
+    "displayName": "At His Pace",
+    "description": "Walk old Biscuit, as slowly as he needs.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_ONE_UMBRELLA",
+    "id": "one_umbrella",
+    "displayName": "Under One Umbrella",
+    "description": "Hold your parents’ hands in the rain.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_FOR_GRANDPA",
+    "id": "for_grandpa",
+    "displayName": "For Grandpa",
+    "description": "Let a paper lantern go.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_SAT_WITH_GRANDPA",
+    "id": "sat_with_grandpa",
+    "displayName": "Time Well Spent",
+    "description": "Sit with Grandpa on the porch.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_SAID_LATER",
+    "id": "said_later",
+    "displayName": "Later",
+    "description": "Tell Grandpa you’ll sit with him later.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_LONG_GRASS",
+    "id": "long_grass",
+    "displayName": "The Long Grass",
+    "description": "Take the shortcut down Miller’s Hill.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_RACE_WON",
+    "id": "race_won",
+    "displayName": "Mint Chip’s on Theo",
+    "description": "Beat Theo down Miller’s Hill.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_SAM_POND",
+    "id": "sam_pond",
+    "displayName": "The House with the Little Oak",
+    "description": "Show Sam the pond.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_HANDPRINTS",
+    "id": "handprints",
+    "displayName": "Forever",
+    "description": "Leave your handprints in the wet cement with Theo.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_FAMILY_RECORD",
+    "id": "family_record",
+    "displayName": "Family Record",
+    "description": "Skip a stone seven times.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_STREETLIGHTS",
+    "id": "streetlights",
+    "displayName": "One by One",
+    "description": "Watch the streetlights come on.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_TOP_OF_THE_HILL",
+    "id": "top_of_the_hill",
+    "displayName": "Everything",
+    "description": "Find the spot at the very top of Miller’s Hill.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_END_TO_END",
+    "id": "end_to_end",
+    "displayName": "End to End",
+    "description": "Ride the whole street, from one edge of town to the other.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_CH7_COMING_HOME",
+    "id": "ch7_coming_home",
+    "displayName": "Coming Home",
+    "description": "Answer the phone on a quiet winter morning.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_CH7_THREE_GENERATIONS",
+    "id": "ch7_three_generations",
+    "displayName": "Three Generations",
+    "description": "Hear Pip hum the lullaby.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_CH7_SNOW_FIRST",
+    "id": "ch7_snow_first",
+    "displayName": "Snow First",
+    "description": "Go straight out into the snow with Pip.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CH7_TALK_FIRST",
+    "id": "ch7_talk_first",
+    "displayName": "Grown-up Talk",
+    "description": "Sit with your child on the porch before going out to play.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CH7_PASS_IT_ON",
+    "id": "ch7_pass_it_on",
+    "displayName": "Pass It On",
+    "description": "Tell your child to put the phone away.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CH7_CONFESSION",
+    "id": "ch7_confession",
+    "displayName": "What I Learned",
+    "description": "Tell your child about the emails you answered.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CH7_SWING_AGAIN",
+    "id": "ch7_swing_again",
+    "displayName": "Higher, Higher",
+    "description": "Push Pip on the old swing.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CH7_WATCH",
+    "id": "ch7_watch",
+    "displayName": "Time’s a Funny Thing",
+    "description": "Give Grandpa’s watch to Pip.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CH7_SCARF",
+    "id": "ch7_scarf",
+    "displayName": "Already There",
+    "description": "Give Pip your scarf, and the words you never heard.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CH7_GIFT_LATER",
+    "id": "ch7_gift_later",
+    "displayName": "A Little Longer Still",
+    "description": "Keep the gift a little longer, then leave it with a note.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CH7_EGG_TABLE",
+    "id": "ch7_egg_table",
+    "displayName": "Round and Round",
+    "description": "Walk all the way around the kitchen table, like a three-year-old.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_CH7_EGG_THEO",
+    "id": "ch7_egg_theo",
+    "displayName": "Still Neighbours",
+    "description": "Find Theo’s card in the mailbox.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_CH7_EGG_FOX",
+    "id": "ch7_egg_fox",
+    "displayName": "The Night Visitor",
+    "description": "Stand at the window long enough to see who visits at night.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_CH8_HELD",
+    "id": "ch8_held",
+    "displayName": "Held",
+    "description": "Walk the whole path and be carried home.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_CH8_EVERY_MOMENT",
+    "id": "ch8_every_moment",
+    "displayName": "Every Little Moment",
+    "description": "Keep every moment there was to keep.",
+    "hidden": true,
+    "category": "album"
+  },
+  {
+    "apiName": "ACH_CH8_PRESENT",
+    "id": "ch8_present",
+    "displayName": "Present",
+    "description": "Finish with an empty album. You were there for all of it.",
+    "hidden": true,
+    "category": "album"
+  },
+  {
+    "apiName": "ACH_CH8_NO_GOING_BACK",
+    "id": "ch8_no_going_back",
+    "displayName": "No Going Back",
+    "description": "Try to walk back along the path.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_CH8_CATCH_UP",
+    "id": "ch8_catch_up",
+    "displayName": "I’ll Catch Up",
+    "description": "Stop and wait with Sam on the path.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
     "apiName": "ACH_KONAMI",
     "id": "konami",
     "displayName": "Party Hats",

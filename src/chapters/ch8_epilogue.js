@@ -590,7 +590,6 @@ export function showEnding() {
   root.addEventListener('pointerdown', onDown);
   btn.addEventListener('click', (e) => { e.stopPropagation(); finish(); });
   ach.addEventListener('click', (e) => { e.stopPropagation(); G.showAchievements?.(); });
-  achieve('game_complete', 'A Whole Life', 'Lived a whole life, from tiny to tiny again.');
   if (n > 0 && n >= m) achieve('ch8_every_moment', 'Every Little Moment', 'Kept every moment there was to keep.');
   if (n === 0) achieve('ch8_present', 'Present', 'Finished with an empty album. You were there for all of it.');
   setTimeout(() => show(0), 400);

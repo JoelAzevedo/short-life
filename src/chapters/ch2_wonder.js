@@ -843,7 +843,7 @@ export const summerNight = {
         await R.cameraTo(new THREE.Vector3(6.0, 1.2, 3.1), 5.6, 3.5);
         await lower('You wished for this. Exactly this. You didn’t say it out loud, so it would come true.');
         await keep('stars', 'Counting stars with Dad');
-        G.achieve?.('shooting_star', 'Make a wish', 'Count the stars with Dad');
+        G.achieve?.('shooting_star', 'Count the Stars', 'Count the stars with Dad');
         ctx.stars.setOpacity(1);
         mood('summerNight', 3);
         W.remove(skyG); W.removeParticles(sky);

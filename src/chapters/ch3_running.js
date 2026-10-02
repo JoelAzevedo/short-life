@@ -345,7 +345,7 @@ export const town = {
           await say(b, 'You don’t know my address.');
           await say(sam, 'The house with the little oak tree. I’ll figure it out.');
           G.state.flags.samPostcard = true;
-          G.achieve?.('postcard', 'The house with the little oak', 'Show Sam the pond');
+          G.achieve?.('sam_pond', 'The house with the little oak', 'Show Sam the pond');
           sam.setPose('idle'); b.setPose('idle');
           await say(sam, 'Bye, oak-tree kid.');
           sam.walkTo(32.5, 8.5, { speed: 2.6 }).then(() => sam.walkTo(14, 8.7)).then(() => { sam.root.visible = false; });
