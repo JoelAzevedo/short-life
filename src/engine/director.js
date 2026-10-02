@@ -57,6 +57,7 @@ export class Director {
       if ((G.state.stats.workTimes || 0) === (G.state.stats.workAtCh5 || 0)) G.achieve?.('unplugged');
     }
     if (last) {
+      G.album.save(0); // the life is complete: the title offers a new one
       G.achieve?.('the_end');
       G.achieve?.(G.state.identity === 'father' ? 'as_father' : 'as_mother');
       if (G.ach?.remember('identity', G.state.identity) >= 2) G.achieve?.('both_lives');
