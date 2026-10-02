@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Little Moments</title>
+<meta name="description" content="An isometric story about how small we begin, how fast it goes, and the little moments worth keeping.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="game"></div>
+<div id="ui">
+  <div id="fade"></div>
+  <div id="hud">
+    <div id="clock" class="hidden">
+      <svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="42"/><circle class="fill" cx="50" cy="50" r="42"/><g class="sun"><circle cx="50" cy="8" r="6"/></g></svg>
+      <div class="age"><span class="num">0</span><span class="lbl">years</span></div>
+    </div>
+    <button id="albumBtn" class="hidden" title="Album (J)"><span class="ico"></span><span class="count">0</span></button>
+    <button id="menuBtn" class="hidden" title="Pause (Esc)">❙❙</button>
+  </div>
+  <div id="prompt" class="hidden"><span class="key">Space</span><span class="txt"></span></div>
+  <div id="bubbles"></div>
+  <div id="narr"></div>
+  <div id="lower"></div>
+  <div id="choices" class="hidden"></div>
+  <div id="mg"></div>
+  <div id="keep" class="hidden">
+    <div class="frame"><div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div></div>
+    <div class="keepui">
+      <svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="40"/><circle class="fill" cx="50" cy="50" r="40"/></svg>
+      <div class="msg">Hold <b>Space</b> to keep this moment</div>
+      <div class="timer"><div></div></div>
+    </div>
+  </div>
+  <div id="flash"></div>
+  <div id="flyer"></div>
+  <div id="card" class="hidden"><div class="num"></div><div class="title"></div><div class="ages"></div><div class="quote"></div></div>
+  <div id="hint"></div>
+  <div id="menu" class="hidden"></div>
+  <div id="album" class="hidden"></div>
+  <div id="title" class="hidden"></div>
+</div>
+<noscript>This game needs JavaScript.</noscript>
+<script src="dist/game.js"></script>
+</body>
+</html>
