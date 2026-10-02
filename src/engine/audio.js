@@ -91,7 +91,7 @@ export class Audio {
       g.gain.setTargetAtTime(sus, t + a, d);
       g.gain.setTargetAtTime(0.0001, end, rel);
     };
-    const osc = (type, freq, detune = 0) => { const o = ctx.createOscillator(); o.type = type; o.frequency.value = freq; o.detune.value = detune; return o; };
+    const osc = (type, freq, detune = 0) => { const o = ctx.createOscillator(); o.type = type; o.frequency.value = Math.min(freq, 19000); o.detune.value = detune; return o; };
     const stopAt = (nodes, when) => nodes.forEach((n) => { n.start(t); n.stop(when); });
     switch (inst) {
       case 'musicbox': {
