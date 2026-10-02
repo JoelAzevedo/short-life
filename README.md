@@ -14,6 +14,21 @@ your album. Moments you ignore, or are too slow to keep, pass. From your teens o
 **life clock** keeps moving while you wander (it stops while you're present in a moment),
 and the window to keep a memory gets shorter when life speeds up.
 
+## Replayability
+
+- **Alternate paths.** Choose to become a mother or a father, raise a daughter or a son,
+  and make choices that change what happens: who you call for as a baby, whose lap you
+  fall asleep on, whether you sit with Grandpa on the porch or ride off ("later"), who
+  you go to the festival with, who gets the first wedding dance, whether you wake your
+  partner at 3 a.m., say no to working on a Saturday, let go of the bike, knock on the
+  slammed door, drive your child to college… The epilogue and the final album reflect
+  the life you actually lived.
+- **Easter eggs.** Hidden ✦ spots with no glow (the prompt appears only when you're
+  right next to them), and a few traditions (try ↑↑↓↓←→←→BA).
+- **Achievements** — 120 of them: story milestones, the album, other lives and little
+  secrets. Stored across playthroughs, viewable from the title screen and pause menu,
+  and ready for Steam (see [docs/STEAM.md](docs/STEAM.md)).
+
 ## Play
 
 The game is a static web page — no install, no server code.
@@ -59,6 +74,13 @@ colour and camera follow the emotions.
   whistle, a humming voice), a sequencer that plays the game's lullaby and generative
   melodies in layers that fade in and out with emotional intensity, procedural ambience
   (birds, wind, rain, crickets, fire, heartbeat, a ticking clock) and sound effects.
+- Characters in the spirit of *Journey* and *A Short Hike*: sculpted heads with
+  simple expressive faces, layered hair with secondary motion, jointed limbs, flowing
+  scarves, proportions that change continuously with age (a crawling baby, a wobbling
+  toddler, a stooped elder with a cane).
+- Lighting follows the classic low-poly recipe: a warm key sun with soft shadows, a
+  cool complementary fill, hemisphere ambient, GTAO ambient occlusion (toggle in the
+  pause menu), atmospheric fog, bloom and a tilt-shift depth-of-field.
 - Everything — models, textures, music, sound — is generated in code. No asset files.
 
 ### Developer flags
