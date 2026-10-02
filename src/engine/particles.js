@@ -25,6 +25,7 @@ const KINDS = {
 export class ParticleField {
   constructor(kind, opts = {}) {
     const k = { ...KINDS[kind], ...opts };
+    k.count = Math.max(1, Math.round(k.count * (G.settings?.v.particles ?? 1)));
     this.k = k; this.kind = kind;
     this.area = opts.area ?? { w: 30, h: 12, d: 30 };
     this.center = opts.center ?? null; // fixed centre (Vector3) or null → follow camera target

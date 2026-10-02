@@ -154,7 +154,7 @@ export function buildKitchen(ctx, { night = true, winter = true, wall = 0xefe2cf
   const refs = { room, table: [0.9, 0.6] };
   const chairPos = [[0.9, -0.35, 0], [1.85, 0.6, -Math.PI / 2], [0.9, 1.55, Math.PI], [-0.05, 0.6, Math.PI / 2]];
   refs.chairs = [];
-  for (let i = 0; i < chairs; i++) { const [x, z, ry] = chairPos[i]; const c = P.chair(C.woodDark); W.add(c, x, z, { ry }); refs.chairs.push([x, z, ry]); }
+  for (let i = 0; i < chairs; i++) { const [x, z, ry] = chairPos[i]; const c = P.chair(C.wood); W.add(c, x, z, { ry }); refs.chairs.push([x, z, ry]); }
   const lmp = P.lamp({ lit: night, table: true }); W.add(lmp, 3.2, -3.1, { y: 0 });
   const sideT = P.table({ w: 0.6, d: 0.5, h: 0.7, color: C.woodLight }); W.add(sideT, 3.2, -3.1, { collide: 0.4 });
   lmp.position.y = 0.7;

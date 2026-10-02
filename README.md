@@ -83,7 +83,24 @@ colour and camera follow the emotions.
   pause menu), atmospheric fog, bloom and a tilt-shift depth-of-field.
 - Everything — models, textures, music, sound — is generated in code. No asset files.
 
+### Settings & performance
+
+**Settings** (title screen or pause menu) has three tabs:
+
+- **Graphics** — presets *Low / Medium / High / Ultra* (picked automatically from your graphics
+  chip), resolution, high-DPI sharpness, adaptive resolution (lowers the resolution when the
+  frame rate drops), shadows (off / hard / soft), ambient occlusion, bloom, dreamy blur &
+  tilt-shift, MSAA anti-aliasing, particle density, a frame-rate cap (30 / 60) and an FPS meter.
+- **Audio** — master, music, sound and ambience volumes; mute in the background.
+- **Game** — auto-advance text, text speed, gentler moment keeping (accessibility), and
+  reduced flashes / camera shake.
+
+If the browser is drawing the game **without hardware acceleration** (software rendering),
+the title screen says so and the Graphics tab explains how to turn it on in Chrome, Edge or
+Firefox. A web page can't switch it on by itself; the desktop build (`electron/`) always
+forces GPU acceleration and prefers the dedicated GPU on dual-graphics laptops.
+
 ### Developer flags
 
 `index.html?s=<scene index or id>` jumps to a scene · `&who=father` · `&child=Name` ·
-`&auto` plays itself (for testing) · `&speed=3` · `&lowfx` · `&noaudio`.
+`&auto` plays itself (for testing) · `&speed=3` · `&quality=low|medium|high|ultra` · `&lowfx` · `&noaudio`.

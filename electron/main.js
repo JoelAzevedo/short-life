@@ -6,6 +6,13 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
+// Always use the graphics chip, even on machines Chromium would normally blocklist,
+// and prefer the dedicated GPU on dual-graphics laptops.
+app.commandLine.appendSwitch('ignore-gpu-blocklist');
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('force_high_performance_gpu');
+
 let steam = null;
 function initSteam() {
   try {
@@ -30,7 +37,7 @@ ipcMain.handle('steam:isActivated', (_e, name) => {
 function createWindow() {
   const win = new BrowserWindow({
     width: 1600, height: 900, backgroundColor: '#0c0b10', autoHideMenuBar: true,
-    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true },
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, backgroundThrottling: false },
   });
   win.loadFile(path.join(__dirname, '..', 'index.html'));
 }

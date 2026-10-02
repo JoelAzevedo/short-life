@@ -301,15 +301,7 @@ export class Director {
     const btn = (label, fn) => { const b = el('button', '', label); b.addEventListener('click', fn); p.appendChild(b); return b; };
     btn('Continue', () => this.closeMenu());
     btn('Album', () => { this.closeMenu(); this.openAlbum(); });
-    const slider = (label, kind) => {
-      const l = el('label', '', `<span>${label}</span>`); const r = el('input'); r.type = 'range'; r.min = 0; r.max = 1; r.step = 0.05; r.value = G.audio.vol[kind];
-      r.addEventListener('input', () => G.audio.setVolume(kind, parseFloat(r.value))); l.appendChild(r); p.appendChild(l);
-    };
-    slider('Music', 'music'); slider('Sound', 'sfx'); slider('Ambience', 'amb');
-    const autoL = el('label', '', '<span>Auto-advance text</span>'); const cb = el('input'); cb.type = 'checkbox'; cb.checked = G.ui.settings.auto;
-    cb.addEventListener('change', () => { G.ui.settings.auto = cb.checked; G.ui.saveSettings(); }); autoL.appendChild(cb); p.appendChild(autoL);
-    const aoL = el('label', '', '<span>Ambient occlusion (quality)</span>'); const ao = el('input'); ao.type = 'checkbox'; ao.checked = G.renderer.ao.enabled;
-    ao.addEventListener('change', () => G.renderer.setAO(ao.checked)); aoL.appendChild(ao); p.appendChild(aoL);
+    btn('Settings', () => { G.settings.open('graphics', () => { G.paused = true; }); });
     btn('Achievements', () => { this.closeMenu(); G.showAchievements?.(); });
     btn('Replay this scene', () => { this.closeMenu(); this.restartScene(); });
     btn('Return to title', () => { this.closeMenu(); this.onTitle && this.onTitle(); });

@@ -36,6 +36,7 @@ export class UI {
   fadeOut(seconds = 1.5, color = '#000') { return this.fade(1, seconds, color); }
   fadeIn(seconds = 1.5) { return this.fade(0, seconds, this.fadeEl.style.background || '#000'); }
   flash(seconds = 0.8, peak = 0.85) {
+    if (G.settings?.v.reduceFlashes) peak = Math.min(peak, 0.25);
     const f = this.flashEl; f.style.transition = 'none'; f.style.opacity = peak; void f.offsetWidth;
     f.style.transition = `opacity ${seconds}s ease`; f.style.opacity = 0;
   }

@@ -11,6 +11,7 @@ import { World } from './engine/world.js';
 import * as P from './engine/props.js';
 import { SCENES } from './chapters/index.js';
 import { Achievements, watchKonami } from './engine/achievements.js';
+import { Settings } from './engine/settings.js';
 
 function boot() {
   const params = new URLSearchParams(location.search);
@@ -21,11 +22,13 @@ function boot() {
   G.autoChoice = parseInt(params.get('choice') || '0', 10);
   G.log = [];
   G.renderer = new Renderer(document.getElementById('game'));
-  if (params.has('lowfx')) { G.renderer.r.setPixelRatio(0.5); G.renderer.r.shadowMap.enabled = false; G.renderer.bloom.enabled = false; G.renderer.ao.enabled = false; G.renderer.resize(); }
   G.scene = G.renderer.scene; G.camera = G.renderer.camera;
   G.input = new Input(G.renderer.r.domElement);
   G.ui = new UI();
   G.audio = new Audio();
+  G.settings = new Settings();
+  if (params.has('lowfx')) { G.settings.v = { ...G.settings.v, scale: 0.5, dprCap: 1, shadows: 'off', ao: false, bloom: false, effects: 'off', msaa: 0, adaptive: false }; G.settings.apply(); }
+  if (params.get('quality')) G.settings.setPreset(params.get('quality'));
   G.album = new Album();
   G.director = new Director(SCENES);
   G.ach = new Achievements();
@@ -42,7 +45,12 @@ function boot() {
 
   let last = performance.now();
   const frame = (now) => {
-    const realDt = Math.min(G.auto ? 0.25 : 0.05, (now - last) / 1000); last = now;
+    requestAnimationFrame(frame);
+    const cap = G.settings.v.fpsCap;
+    if (cap && now - last < 1000 / cap - 2) return; // frame-rate limit
+    const rawDt = (now - last) / 1000;
+    const realDt = Math.min(G.auto ? 0.25 : 0.05, rawDt); last = now;
+    G.settings.tick(Math.min(rawDt, 0.5));
     G.realTime += realDt;
     const inp = G.input;
     if (inp.pressed('pause') && G.director.current) G.director.toggleMenu();
@@ -60,7 +68,6 @@ function boot() {
     G.renderer.update(realDt);
     G.renderer.render();
     inp.endFrame();
-    requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);
 
@@ -142,7 +149,12 @@ function title() {
     cont.addEventListener('click', () => { G.audio.init(); G.album.load(save); start(save.sceneIndex); });
     btns.insertBefore(cont, begin);
   }
+  const setB = el('button', 'ghost', 'Settings'); setB.addEventListener('click', () => G.settings.open()); btns.appendChild(setB);
   const achB = el('button', 'ghost', 'Achievements'); achB.addEventListener('click', () => G.ach.show()); btns.appendChild(achB);
+  if (G.settings.gpu.tier === 'software') {
+    const w = el('div', 'hwWarn', 'Your browser has hardware acceleration turned off, so the game will be slow. <u>How to fix it</u>');
+    w.addEventListener('click', () => G.settings.open('graphics')); t.appendChild(w);
+  }
   let titleClicks = 0;
   t.querySelector('h1').style.pointerEvents = 'auto'; t.querySelector('h1').style.cursor = 'pointer';
   t.querySelector('h1').addEventListener('click', () => {

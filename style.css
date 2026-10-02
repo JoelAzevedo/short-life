@@ -214,3 +214,27 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #0c0b10; col
 .achView .ttl { font-family: var(--serif); font-size: 19px; font-weight: 600; }
 .achView .dsc { font-size: 13px; color: var(--ink-soft); }
 #prompt.secret { background: rgba(240,232,255,0.95); }
+
+/* ---------- settings ---------- */
+.setView { position: absolute; inset: 0; background: rgba(20,16,24,0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; pointer-events: auto; z-index: 31; }
+.setPanel { width: min(680px, 94vw); max-height: 88vh; background: var(--paper); border-radius: 22px; padding: 24px 28px; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+.setPanel .head { display: flex; align-items: center; justify-content: space-between; }
+.setPanel h2 { font-family: var(--serif); font-weight: 500; font-size: 34px; margin: 0; }
+.setPanel .close { border: 0; background: #e8dccb; border-radius: 10px; padding: 9px 18px; font-weight: 700; cursor: pointer; font-family: var(--sans); }
+.setPanel .tabs { display: flex; gap: 6px; margin: 14px 0 10px; }
+.setPanel .tabs button { border: 0; background: #ede3d6; font-family: var(--sans); font-weight: 700; font-size: 14px; padding: 8px 16px; border-radius: 10px; cursor: pointer; color: var(--ink); }
+.setPanel .tabs button.on { background: #8c5a48; color: #fff; }
+.setPanel .body { overflow-y: auto; padding-right: 6px; }
+.setPanel .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 9px 4px; border-bottom: 1px solid #ece2d5; }
+.setPanel .lbl { font-weight: 700; font-size: 14px; color: var(--ink); }
+.setPanel .lbl small { display: block; font-weight: 400; font-size: 12px; color: var(--ink-soft); margin-top: 1px; }
+.setPanel select { font-family: var(--sans); font-size: 14px; padding: 6px 8px; border-radius: 8px; border: 1px solid #d8cbb9; background: #fff; max-width: 60%; }
+.setPanel input[type=checkbox] { width: 20px; height: 20px; accent-color: #c9805e; }
+.setPanel .slider { display: flex; align-items: center; gap: 10px; }
+.setPanel .slider input { width: 170px; accent-color: #c9805e; }
+.setPanel .slider span { font-size: 13px; color: var(--ink-soft); min-width: 42px; text-align: right; }
+.setPanel .gpu { font-size: 13px; line-height: 1.55; background: #f1e9de; border-radius: 12px; padding: 10px 14px; margin-bottom: 6px; color: var(--ink-soft); }
+.setPanel .gpu.warn { background: #fde8d8; color: #7a3a24; }
+.setPanel .note { font-size: 13px; color: var(--ink-soft); padding: 12px 4px; line-height: 1.5; }
+.fpsMeter { position: absolute; left: 10px; top: 10px; font: 600 12px var(--sans); color: #fff; background: rgba(0,0,0,0.35); padding: 3px 8px; border-radius: 8px; }
+.hwWarn { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); background: rgba(253,232,216,0.95); color: #7a3a24; padding: 9px 16px; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; pointer-events: auto; max-width: 90vw; text-align: center; }

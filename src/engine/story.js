@@ -28,7 +28,7 @@ export function camFollow(obj = G.player, zoom = null, seconds = 1.5) {
   return Promise.resolve();
 }
 export function camZoom(z, s = 2) { return G.renderer.zoomTo(z, s); }
-export function shake(a = 0.3) { G.renderer.shake = a; }
+export function shake(a = 0.3) { if (!G.settings?.v.reduceFlashes) G.renderer.shake = a; }
 
 // run in real (unscaled) time, still frozen while paused
 export function everyReal(fn) {
@@ -49,7 +49,9 @@ export async function keep(id, caption, { window: win = null, chapter = null, fo
   caption = fmt(caption);
   A.register(id, ch, caption, G.director.current?.id);
   if (A.has(id)) return true;
-  const windowS = win ?? G.director.keepWindow();
+  const gentle = G.settings?.v.gentleKeep;
+  const windowS = (win ?? G.director.keepWindow()) * (gentle ? 1.7 : 1);
+  if (gentle) holdTime *= 0.6;
   const ui = G.ui, R = G.renderer;
   const k = ui.keepEl;
   const fill = k.querySelector('.fill'); const bar = k.querySelector('.timer div'); const msg = k.querySelector('.msg');

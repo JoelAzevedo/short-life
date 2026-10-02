@@ -10,6 +10,7 @@ import { G, clamp, lerp, damp, tween } from './game.js';
 import { MOOD_DEFAULT, MOODS } from './palette.js';
 
 const GradeShader = {
+  defines: { BLUR_R: 2 },
   uniforms: {
     tDiffuse: { value: null },
     resolution: { value: new THREE.Vector2(1, 1) },
@@ -30,9 +31,9 @@ const GradeShader = {
     varying vec2 vUv;
     float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453); }
     vec3 blurred(vec2 uv, float amt){
-      vec2 px = amt / resolution;
+      vec2 px = amt / resolution * (2.0 / float(BLUR_R));
       vec3 c = vec3(0.0); float w = 0.0;
-      for(int i=-2;i<=2;i++){ for(int j=-2;j<=2;j++){
+      for(int i=-BLUR_R;i<=BLUR_R;i++){ for(int j=-BLUR_R;j<=BLUR_R;j++){
         vec2 o = vec2(float(i), float(j)) * px;
         float k = 1.0 / (1.0 + float(i*i + j*j));
         c += texture2D(tDiffuse, uv + o).rgb * k; w += k;
@@ -78,8 +79,9 @@ const GradeShader = {
 export class Renderer {
   constructor(container) {
     this.container = container;
-    const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
-    r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // MSAA happens in the composer's render targets (see applyQuality); the canvas itself needs none
+    const r = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+    r.setPixelRatio(1);
     r.setSize(window.innerWidth, window.innerHeight);
     r.shadowMap.enabled = true;
     r.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -132,12 +134,20 @@ export class Renderer {
     composer.addPass(new RenderPass(this.scene, this.camera));
     // ambient occlusion grounds every object (toggle in the pause menu)
     this.ao = new GTAOPass(this.scene, this.camera, window.innerWidth, window.innerHeight);
-    this.ao.updateGtaoMaterial({ radius: 0.55, distanceExponent: 1.6, thickness: 2.0, scale: 1.25, samples: 12, distanceFallOff: 1 });
+    this.ao.updateGtaoMaterial({ radius: 0.4, distanceExponent: 1.4, thickness: 0.35, scale: 1.1, samples: 12, distanceFallOff: 0.6 });
     this.ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 12 });
     this.ao.blendIntensity = 0.85;
-    let aoOn = !('ontouchstart' in window);
-    try { const v = localStorage.getItem('lm.ao'); if (v !== null) aoOn = v === '1'; } catch (e) { /* ignore */ }
-    this.ao.enabled = aoOn;
+    this.ao.enabled = false;
+    // glow sprites, particles and other see-through effects must not cast AO
+    // (otherwise their flat quads show up as dark rectangles)
+    this.ao.overrideVisibility = function () {
+      const cache = this._visibilityCache;
+      this.scene.traverse((o) => {
+        cache.set(o, o.visible);
+        const m = o.material;
+        if (o.isPoints || o.isLine || o.isSprite || (m && (m.transparent || m.depthWrite === false || m.blending === THREE.AdditiveBlending))) o.visible = false;
+      });
+    };
     composer.addPass(this.ao);
     this.bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2), 0.3, 0.55, 0.82);
     composer.addPass(this.bloom);
@@ -165,7 +175,37 @@ export class Renderer {
   }
   _clone(m) { const o = {}; for (const k in m) o[k] = m[k] instanceof THREE.Color ? m[k].clone() : m[k]; return o; }
   static isColorKey(k) { return ['skyTop', 'skyBottom', 'fog', 'sun', 'hemiSky', 'hemiGround', 'tint', 'fill'].includes(k); }
-  setAO(on) { this.ao.enabled = on; try { localStorage.setItem('lm.ao', on ? '1' : '0'); } catch (e) { /* ignore */ } }
+  setAO(on) { this.ao.enabled = on; }
+
+  // graphics quality, applied live from Settings
+  applyQuality(q, pixelRatio) {
+    this.quality = q;
+    this.ao.enabled = !!q.ao;
+    this.bloom.enabled = !!q.bloom;
+    const fx = { off: 0, simple: 1, full: 2 }[q.effects] ?? 2;
+    this.fx = fx;
+    if (fx > 0 && this.grade.material.defines.BLUR_R !== fx) { this.grade.material.defines.BLUR_R = fx; this.grade.material.needsUpdate = true; }
+    // shadows
+    const want = q.shadows ?? 'high';
+    const sm = this.r.shadowMap;
+    const prevEnabled = sm.enabled, prevType = sm.type;
+    sm.enabled = want !== 'off';
+    sm.type = want === 'high' ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
+    const size = want === 'high' ? 2048 : 1024;
+    if (this.sun.shadow.mapSize.x !== size) { this.sun.shadow.mapSize.set(size, size); if (this.sun.shadow.map) { this.sun.shadow.map.dispose(); this.sun.shadow.map = null; } }
+    this.sun.castShadow = sm.enabled;
+    if (prevEnabled !== sm.enabled || prevType !== sm.type) this.scene.traverse((o) => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => { m.needsUpdate = true; }); });
+    // anti-aliasing in the post-processing targets (WebGL2 MSAA)
+    const samples = this.r.capabilities.isWebGL2 ? (q.msaa || 0) : 0;
+    for (const rt of [this.composer.renderTarget1, this.composer.renderTarget2]) if (rt.samples !== samples) { rt.samples = samples; rt.dispose(); }
+    this.setPixelRatio(pixelRatio);
+  }
+  setPixelRatio(pr) {
+    if (Math.abs(this.r.getPixelRatio() - pr) < 0.01) return;
+    this.r.setPixelRatio(pr);
+    this.composer.setPixelRatio(pr);
+    this.resize();
+  }
 
   // mood can be a preset name, an object, or a preset name + overrides
   setMood(mood, seconds = 2, extra = null) {
@@ -228,8 +268,9 @@ export class Renderer {
     u.tint.value.copy(m.tint); u.tintAmt.value = m.tintAmt;
     u.vignette.value = m.vignette + (o.vignette ?? 0);
     u.grain.value = m.grain;
-    u.tilt.value = m.tilt;
-    u.dream.value = clamp(m.dream + (o.dream ?? 0), 0, 1.2);
+    const fxk = this.fx === 0 ? 0 : 1;
+    u.tilt.value = m.tilt * fxk;
+    u.dream.value = clamp(m.dream + (o.dream ?? 0), 0, 1.2) * fxk;
     u.focus.value.set(o.focusX ?? m.focusX, o.focusY ?? m.focusY);
     u.focusRadius.value = o.focusRadius ?? m.focusRadius;
     u.focusDesat.value = o.focusDesat ?? m.focusDesat;
