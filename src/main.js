@@ -18,6 +18,7 @@ function boot() {
   G.speed = parseFloat(params.get('speed') || '1');
   G.auto = params.has('auto');
   G.autoSkip = params.has('skiplittle');
+  G.autoChoice = parseInt(params.get('choice') || '0', 10);
   G.log = [];
   G.renderer = new Renderer(document.getElementById('game'));
   if (params.has('lowfx')) { G.renderer.r.setPixelRatio(0.5); G.renderer.r.shadowMap.enabled = false; G.renderer.bloom.enabled = false; G.renderer.ao.enabled = false; G.renderer.resize(); }

@@ -135,10 +135,29 @@ export const nursery = {
       },
     },
     {
+      id: 'plant', kind: 'secret', label: 'That plant looks delicious', at: [3.1, 2.3], radius: 0.8,
+      async run(ctx) {
+        const b = ctx.me;
+        await b.walkTo(3.1, 2.25); b.face(3.4, 2.6); b.setPose('sitGround', { reach: true });
+        sfx('rustle'); await wait(0.8);
+        sfx('coo', { pitch: 0.8 });
+        await lower('It did not taste delicious. It tasted like a plant.');
+        await lower('Somewhere downstairs, a voice called: “Is everything alright up there?”');
+        G.achieve?.('plant_snack');
+        b.setPose('idle');
+      },
+    },
+    {
       id: 'lullaby', kind: 'story', label: 'Call for someone', at: [0.3, 0.6], radius: 1.3, caption: 'The song she sang',
       async run(ctx) {
-        const b = ctx.me, mom = ctx.mom;
+        const b = ctx.me;
         b.setPose('sitGround', { look: -0.3 });
+        const who = await choose('You want someone. You want…', ['“Mama!”', '“Papa!”']);
+        const mom = who === 0 ? ctx.mom : ctx.dad;   // whoever comes, sings
+        ctx.singer = mom; ctx.other = who === 0 ? ctx.dad : ctx.mom;
+        G.state.flags.calledFor = who === 0 ? 'mom' : 'dad';
+        G.achieve?.(who === 0 ? 'call_mom' : 'call_dad');
+        const she = who === 0 ? 'She' : 'He';
         sfx('cry');
         await wait(2);
         sfx('door');
@@ -151,7 +170,7 @@ export const nursery = {
         await wait(0.8);
         mom.pickUp(b); mom.setPose('carry');
         sfx('coo');
-        await say(mom, 'There you are, little one. Did you think I’d gone?');
+        await say(mom, who === 0 ? 'There you are, little one. Did you think I’d gone?' : 'Hey, hey. Papa’s here. Papa’s got you.');
         await mom.walkTo(2.3, -1.55);
         mom.place(2.4, -2.15, -0.7); mom.setPose('rock');
         await camTo(2.3, -1.8, 4.8, 2);
@@ -161,11 +180,12 @@ export const nursery = {
         const rocker = (dt) => { rockT += dt; const s = Math.sin(rockT * 2.0) * 0.09; chair.rotation.x = s; mom.lean = s * 0.8; };
         G.updaters.add(rocker);
         await wait(1.5);
-        const singing = (async () => { for (const l of LULLABY_WORDS) await say(mom, l, { passive: true, hold: 3.4, name: 'Mom' }); })();
-        await rhythm({ label: 'Rock with her — press Space on the first beat of each bar', hits: 4, onlyDownbeat: true, window: 0.3 });
+        const singing = (async () => { for (const l of LULLABY_WORDS) await say(mom, l, { passive: true, hold: 3.4, name: mom.name }); })();
+        await rhythm({ label: `Rock with ${who === 0 ? 'her' : 'him'} — press Space on the first beat of each bar`, hits: 4, onlyDownbeat: true, window: 0.3 });
         await singing;
-        await keep('lullaby', 'The song she sang');
-        await lower('She sang it every night. One day you would sing it too — though you didn’t know that yet.');
+        await keep('lullaby', who === 0 ? 'The song she sang' : 'The song he sang');
+        if (who === 1) await lower('Your father couldn’t really sing. He sang anyway — the song his own mother had sung to him.');
+        await lower(`${she} sang it every night. One day you would sing it too — though you didn’t know that yet.`);
         G.updaters.delete(rocker); chair.rotation.x = 0; mom.lean = 0;
         mom.setPose('idle');
         mom.position.set(2.0, 0, -1.5);
@@ -182,7 +202,7 @@ export const nursery = {
     {
       id: 'firstSteps', kind: 'story', label: 'Pull yourself up on the crib', at: [-1.6, -1.8], requires: ['lullaby'], caption: 'Three steps. They cried.',
       async run(ctx) {
-        const b = ctx.me, mom = ctx.mom, dad = ctx.dad;
+        const b = ctx.me, mom = ctx.singer ?? ctx.mom, dad = ctx.other ?? ctx.dad;
         await b.walkTo(-1.6, -1.85); b.faceNow(-1.6, -2.6);
         sfx('door');
         dad.root.visible = true; dad.place(-3.4, 1.8, Math.PI / 2);
@@ -199,10 +219,11 @@ export const nursery = {
         await balance({ label: 'Find your balance — ← →', seconds: 3.5, difficulty: 0.8, onUpdate: (x) => { b.tilt = -x * 0.3; } });
         b.tilt = 0;
         await say(dad, 'Come on. Come to me. You can do it.');
+        b.setPose('idle');
         G.director.current.speedMul = 0.55;
         let wt = 0; const wobble = (dt) => { wt += dt; b.tilt = Math.sin(wt * 7) * 0.12; };
         G.updaters.add(wobble);
-        await collect({ label: 'Walk to Dad', items: [{ x: dad.position.x, z: dad.position.z, r: 0.45 }], showCount: false });
+        await collect({ label: `Walk to ${dad.name}`, items: [{ x: dad.position.x, z: dad.position.z, r: 0.45 }], showCount: false });
         G.updaters.delete(wobble); b.tilt = 0;
         G.director.current.speedMul = 1;
         dad.pickUp(b); dad.setPose('carryHigh');
@@ -214,6 +235,7 @@ export const nursery = {
         await say(mom, 'Three steps! Did you count? Three!');
         await say(mom, 'I’m not crying. You’re crying.');
         await keep('firstSteps', 'Three steps. They cried.');
+        G.achieve?.('first_steps');
         mom.setPose('idle');
         await lower('That spring, they carried you outside for the very first time.');
         await fadeOut(2.5, '#fff6ee');
@@ -222,6 +244,52 @@ export const nursery = {
   ],
   final: 'firstSteps',
 };
+
+// Fall asleep on a grandparent's lap — you can only choose one (the other is another life).
+function lapMoment(who) {
+  const gpa = who === 'grandpa';
+  const id = gpa ? 'grandpaLap' : 'grandmaLap';
+  return {
+    id, kind: 'story', alt: 'lap', label: gpa ? 'Go to Grandpa' : 'Go to Grandma', anchor: (ctx) => ctx[who], offset: [0, 0, 0.8], requires: ['firstWord'],
+    caption: gpa ? 'Asleep on Grandpa’s lap' : 'Asleep on Grandma’s lap',
+    async run(ctx) {
+      const b = ctx.me, gp = ctx[who], dad = ctx.dad;
+      const parent = G.state.flags.calledFor === 'dad' ? 'father' : 'mother';
+      dad.setPose('idle');
+      await dad.walkToChar(b, 0.6);
+      dad.setPose('crouch'); await wait(0.5);
+      dad.pickUp(b); dad.setPose('carry');
+      await dad.walkTo(gp.position.x + 0.2, gp.position.z + 0.9);
+      dad.faceChar(gp);
+      await say(gp, gpa ? 'Give that little bundle here.' : 'Come to Grandma, sweet pea. Come here.');
+      dad.putDown(gp.position.x, gp.position.z + 0.3);
+      gp.pickUp(b); gp.setPose('carry');
+      await dad.walkTo(0.4, 0.3);
+      await camTo(gp.position.x, gp.position.z, 4.6, 2.5);
+      music(gpa ? 'whistle' : 'tinyHum', { intensity: 0.5 });
+      mood('goldenAfternoon', 10, { dream: 0.3 });
+      if (gpa) {
+        await lower('Grandpa whistled the same song you had heard in the nursery.');
+        await lower(`He had sung it to your ${parent} once, when they were the one who was small.`);
+      } else {
+        await lower('Grandma hummed the song — slower than anyone else ever sang it.');
+        await lower(`She had taught it to your ${parent}, a long time ago, in a different nursery.`);
+        await say(ctx.grandpa, 'You always did put them to sleep faster than me.');
+      }
+      await stillness({ seconds: 7, label: 'Close your eyes.' });
+      b.setPose('sleep');
+      await keep(id, gpa ? 'Asleep on Grandpa’s lap' : 'Asleep on Grandma’s lap', { window: 10 });
+      G.achieve?.(gpa ? 'grandpa_lap' : 'grandma_lap');
+      G.state.flags.lap = who;
+      await wait(1);
+      music('tiny', { intensity: 0.2 });
+      await fadeOut(4, '#16121a');
+      await narrate(['You won’t remember any of this.', 'Not the stars, not the sunlight, not the song.', 'But they will.', 'They will carry it for you — until you’re big enough to carry it yourself.'], { minTime: 1.4 });
+      G.ui.clearNarration();
+      await wait(1.2);
+    },
+  };
+}
 
 // ---------------------------------------------------------------------
 export const firstSpring = {
@@ -252,6 +320,27 @@ export const firstSpring = {
     await say(ctx.grandma, 'Look at those eyes. They want to see everything.');
   },
   moments: [
+    {
+      id: 'hedgehog', kind: 'secret', label: 'Something is rustling in the flowers', at: [-8.4, -2.7], radius: 0.9,
+      async run(ctx) {
+        const b = ctx.me, W = ctx.world;
+        await b.walkTo(-8.4, -2.6); b.face(-8.8, -3.4); b.setPose('sitGround', { look: 0.3 });
+        sfx('rustle');
+        const hog = new THREE.Group();
+        const body = P.ico(0.16, 1, 0x8a6a50, 0.03); body.scale.set(1, 0.7, 1.3); body.position.y = 0.1; hog.add(body);
+        for (let i = 0; i < 14; i++) { const sp = P.cone(0.03, 0.12, 3, 0x5a4636); const a = i * 2.4; sp.position.set(Math.cos(a) * 0.1, 0.16 + (i % 3) * 0.02, Math.sin(a) * 0.12 - 0.03); sp.rotation.set(-0.6 + Math.sin(a) * 0.4, 0, Math.cos(a) * 0.6); hog.add(sp); }
+        const face = P.ico(0.07, 0, 0xd9b896); face.position.set(0, 0.08, 0.2); hog.add(face);
+        const nose = P.sphere(0.022, 5, 4, 0x222222); nose.position.set(0, 0.08, 0.27); hog.add(nose);
+        W.add(hog, -8.8, -3.3, { ry: 0.5 });
+        await tween(1.2, (k) => { hog.position.z = -3.3 + k * 0.25; });
+        sfx('giggle');
+        await lower('A hedgehog. It looked at you. You looked at it. Neither of you had ever seen anything like the other.');
+        G.achieve?.('hedgehog');
+        await tween(1.5, (k) => { hog.position.z = -3.05 - k * 0.5; hog.scale.setScalar(1 - k * 0.3); });
+        W.remove(hog);
+        b.setPose('idle');
+      },
+    },
     {
       id: 'petals', label: 'Reach for the falling petals', at: [-7.6, 0.4], caption: 'Blossoms, falling like slow snow',
       async run(ctx) {
@@ -363,38 +452,11 @@ export const firstSpring = {
         sfx('giggle');
         await keep('firstWord', `Your first word: “${word}”`);
         G.state.flags.firstWord = word;
+        G.achieve?.('first_word'); if (i === 2) G.achieve?.('word_woof');
       },
     },
-    {
-      id: 'grandpaLap', kind: 'story', label: 'Go to Grandpa', anchor: (ctx) => ctx.grandpa, offset: [0, 0, 0.8], requires: ['firstWord'], caption: 'Asleep on Grandpa’s lap',
-      async run(ctx) {
-        const b = ctx.me, gp = ctx.grandpa, dad = ctx.dad;
-        dad.setPose('idle');
-        await dad.walkToChar(b, 0.6);
-        dad.setPose('crouch'); await wait(0.5);
-        dad.pickUp(b); dad.setPose('carry');
-        await dad.walkTo(gp.position.x + 0.2, gp.position.z + 0.9);
-        dad.faceChar(gp);
-        await say(gp, 'Give that little bundle here.');
-        dad.putDown(gp.position.x, gp.position.z + 0.3);
-        gp.pickUp(b); gp.setPose('carry');
-        await dad.walkTo(0.4, 0.3);
-        await camTo(gp.position.x, gp.position.z, 4.6, 2.5);
-        music('whistle', { intensity: 0.5 });
-        mood('goldenAfternoon', 10, { dream: 0.3 });
-        await lower('Grandpa whistled the same song your mother sang to you.');
-        await lower('He had sung it to her, once, when she was the one who was small.');
-        await stillness({ seconds: 7, label: 'Close your eyes.' });
-        b.setPose('sleep');
-        await keep('grandpaLap', 'Asleep on Grandpa’s lap', { window: 10 });
-        await wait(1);
-        music('tiny', { intensity: 0.2 });
-        await fadeOut(4, '#16121a');
-        await narrate(['You won’t remember any of this.', 'Not the stars, not the sunlight, not the song.', 'But they will.', 'They will carry it for you — until you’re big enough to carry it yourself.'], { minTime: 1.4 });
-        G.ui.clearNarration();
-        await wait(1.2);
-      },
-    },
+    lapMoment('grandpa'),
+    lapMoment('grandma'),
   ],
-  final: 'grandpaLap',
+  exitWhen: (ctx) => ctx.done('grandpaLap') || ctx.done('grandmaLap'),
 };

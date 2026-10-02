@@ -2,11 +2,13 @@
   "name": "short-life",
   "version": "1.0.0",
   "private": true,
-  "description": "So Small, So Fast — an isometric low-poly story game about the shortness of life.",
+  "description": "So Small, So Fast \u2014 an isometric low-poly story game about the shortness of life.",
   "scripts": {
     "build": "esbuild src/main.js --bundle --format=iife --minify --sourcemap --target=es2020 --outfile=dist/game.js",
     "watch": "esbuild src/main.js --bundle --format=iife --sourcemap --target=es2020 --outfile=dist/game.js --watch",
-    "serve": "python3 -m http.server 8080"
+    "serve": "python3 -m http.server 8080",
+    "achievements": "node scripts/export-achievements.mjs",
+    "desktop": "electron electron/main.js"
   },
   "dependencies": {
     "three": "0.170.0"

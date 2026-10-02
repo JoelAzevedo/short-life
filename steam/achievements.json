@@ -1,0 +1,362 @@
+[
+  {
+    "apiName": "ACH_BEGIN",
+    "id": "begin",
+    "displayName": "So Small",
+    "description": "Begin a life.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_FIRST_STEPS",
+    "id": "first_steps",
+    "displayName": "Three Steps",
+    "description": "Take your first steps.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_FIRST_WORD",
+    "id": "first_word",
+    "displayName": "First Word",
+    "description": "Say your very first word.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_CH1",
+    "id": "ch1",
+    "displayName": "Tiny",
+    "description": "Finish Chapter I.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_CH2",
+    "id": "ch2",
+    "displayName": "Wonder",
+    "description": "Finish Chapter II.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_CH3",
+    "id": "ch3",
+    "displayName": "Running",
+    "description": "Finish Chapter III.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_CH4",
+    "id": "ch4",
+    "displayName": "Together",
+    "description": "Finish Chapter IV.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_CH5",
+    "id": "ch5",
+    "displayName": "Little Ones",
+    "description": "Finish Chapter V.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_CH6",
+    "id": "ch6",
+    "displayName": "So Fast",
+    "description": "Finish Chapter VI.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_CH7",
+    "id": "ch7",
+    "displayName": "Winter",
+    "description": "Finish Chapter VII.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_THE_END",
+    "id": "the_end",
+    "displayName": "The Little Moments",
+    "description": "Live a whole life.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_YOUR_SONG",
+    "id": "your_song",
+    "displayName": "Your Mother’s Song",
+    "description": "Sing the lullaby to your own child.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_ALWAYS",
+    "id": "always",
+    "displayName": "Will You Always Be Here?",
+    "description": "Answer the hardest question.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_KEEP_1",
+    "id": "keep_1",
+    "displayName": "Click",
+    "description": "Keep your first moment.",
+    "hidden": false,
+    "category": "album"
+  },
+  {
+    "apiName": "ACH_KEEP_10",
+    "id": "keep_10",
+    "displayName": "A Handful of Moments",
+    "description": "Keep 10 moments.",
+    "hidden": false,
+    "category": "album"
+  },
+  {
+    "apiName": "ACH_KEEP_30",
+    "id": "keep_30",
+    "displayName": "A Shoebox of Photographs",
+    "description": "Keep 30 moments.",
+    "hidden": false,
+    "category": "album"
+  },
+  {
+    "apiName": "ACH_KEEP_60",
+    "id": "keep_60",
+    "displayName": "A Full Album",
+    "description": "Keep 60 moments.",
+    "hidden": false,
+    "category": "album"
+  },
+  {
+    "apiName": "ACH_PRESENT",
+    "id": "present",
+    "displayName": "Fully Present",
+    "description": "Keep every moment in a chapter.",
+    "hidden": false,
+    "category": "album"
+  },
+  {
+    "apiName": "ACH_PASSED",
+    "id": "passed",
+    "displayName": "It Happened Anyway",
+    "description": "Let a moment pass you by.",
+    "hidden": false,
+    "category": "album"
+  },
+  {
+    "apiName": "ACH_AS_MOTHER",
+    "id": "as_mother",
+    "displayName": "A Mother",
+    "description": "Live a whole life as a mother.",
+    "hidden": false,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_AS_FATHER",
+    "id": "as_father",
+    "displayName": "A Father",
+    "description": "Live a whole life as a father.",
+    "hidden": false,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_BOTH_LIVES",
+    "id": "both_lives",
+    "displayName": "Two Lives",
+    "description": "Live a whole life as a mother and as a father.",
+    "hidden": false,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CALL_MOM",
+    "id": "call_mom",
+    "displayName": "Mama’s Arms",
+    "description": "Call for your mother in the nursery.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_CALL_DAD",
+    "id": "call_dad",
+    "displayName": "Papa’s Arms",
+    "description": "Call for your father in the nursery.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_WORD_WOOF",
+    "id": "word_woof",
+    "displayName": "Woof",
+    "description": "Make your first word a bark.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_GRANDMA_LAP",
+    "id": "grandma_lap",
+    "displayName": "Grandma’s Lap",
+    "description": "Fall asleep on Grandma’s lap.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_GRANDPA_LAP",
+    "id": "grandpa_lap",
+    "displayName": "Grandpa’s Whistle",
+    "description": "Fall asleep on Grandpa’s lap.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_DAUGHTER",
+    "id": "daughter",
+    "displayName": "A Daughter",
+    "description": "Raise a daughter.",
+    "hidden": false,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_SON",
+    "id": "son",
+    "displayName": "A Son",
+    "description": "Raise a son.",
+    "hidden": false,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_WAKE_SAM",
+    "id": "wake_sam",
+    "displayName": "Two Tired People",
+    "description": "Wake Sam for the 3 a.m. feed.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_LET_GO",
+    "id": "let_go",
+    "displayName": "Let Go",
+    "description": "Let go of the bike.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_HELD_ON",
+    "id": "held_on",
+    "displayName": "A Little Longer",
+    "description": "Hold on to the bike a little longer.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_SAID_NO",
+    "id": "said_no",
+    "displayName": "Not Today",
+    "description": "Say no to working on a Saturday.",
+    "hidden": false,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_WORKAHOLIC",
+    "id": "workaholic",
+    "displayName": "Just One More Email",
+    "description": "Answer work five times in one life.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_UNPLUGGED",
+    "id": "unplugged",
+    "displayName": "Unplugged",
+    "description": "Get through Chapter V without answering work once.",
+    "hidden": false,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_PUPPY",
+    "id": "puppy",
+    "displayName": "A New Biscuit",
+    "description": "Say yes to the puppy.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_EVERY_ANSWER",
+    "id": "every_answer",
+    "displayName": "Every Answer Was True",
+    "description": "Give each answer to “Will you always be here?” across your lives.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_KONAMI",
+    "id": "konami",
+    "displayName": "Party Hats",
+    "description": "Up, up, down, down…",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_TITLE_SWING",
+    "id": "title_swing",
+    "displayName": "One More Push",
+    "description": "Be very impatient on the title screen.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_FRIDGE",
+    "id": "fridge",
+    "displayName": "Old Friend",
+    "description": "Find what is stuck to the fridge.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_PLANT_SNACK",
+    "id": "plant_snack",
+    "displayName": "Taste Test",
+    "description": "Find out what the plant tastes like.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_HEDGEHOG",
+    "id": "hedgehog",
+    "displayName": "A Tiny Friend",
+    "description": "Find who lives under the hedge.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_DIAPER",
+    "id": "diaper",
+    "displayName": "Your Turn",
+    "description": "Volunteer for diaper duty.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_POSTCARD",
+    "id": "postcard",
+    "displayName": "Wish You Were Here",
+    "description": "Check the mailbox.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_WISH",
+    "id": "wish",
+    "displayName": "Make a Wish",
+    "description": "Catch the shooting star.",
+    "hidden": true,
+    "category": "egg"
+  }
+]

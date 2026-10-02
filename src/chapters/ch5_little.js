@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import * as P from '../engine/props.js';
 import { C } from '../engine/props.js';
 import { G, tween, rng, child, they, them, their, They, me, fmt } from '../engine/game.js';
-import { LOOKS, childLook, youLook } from '../engine/character.js';
+import { LOOKS, childLook, youLook, Dog } from '../engine/character.js';
 import { narrate, lower, say, think, wait, keep, lose, mood, music, amb, sfx, camTo, camFollow, camZoom, fadeOut, fadeIn, intensity, hop, choose, askText } from '../engine/story.js';
 import { stillness, tap, rhythm, balance, sequence, collect, hold, stayNear, timing, walkWith } from '../engine/minigames.js';
 import { buildNursery, buildYard, buildLiving, makePlayer, person, skyDressing } from './places.js';
@@ -55,6 +55,8 @@ function workMoment({ id, label, at, emails = 12, cost = 60, lines }) {
       await think(hl);
       for (let i = 0; i < 6; i++) { sfx('tap', { vol: 0.5 }); await wait(0.12); }
       G.state.stats.emails += emails;
+      G.state.stats.workTimes = (G.state.stats.workTimes || 0) + 1;
+      if (G.state.stats.workTimes >= 5) G.achieve?.('workaholic');
       ctx.passTime(cost);
       // something passes while you aren't looking
       const avail = ctx.world.hotspots.filter((x) => x.enabled && !x.done && (x.m?.kind ?? 'little') === 'little');
@@ -87,6 +89,7 @@ export const newborn = {
   hint: 'Blue lights are work. They will always be there.',
   build(ctx) {
     const W = ctx.world;
+    G.state.stats.workAtCh5 = G.state.stats.workTimes || 0;
     ctx.r = buildNursery(ctx, { era: 'present', night: true });
     ctx.r.mobile.visible = false;
     ctx.me = makePlayer(31, 0.6, 1.4, Math.PI);
@@ -97,6 +100,7 @@ export const newborn = {
     const lap = P.laptop(); W.add(lap, 3.3, 0.6, { y: 0.75, ry: -Math.PI / 2 });
     W.add(P.cardboardBox(0.6), 2.9, 2.6, { collide: 0.4 }); ctx.atticBox = [2.9, 2.6];
     W.add(P.cardboardBox(0.5), 3.4, 2.0, { collide: 0.35 });
+    W.add(P.box(0.35, 0.3, 0.25, 0xcfe6f5), -3.45, 0.2, { collide: 0.25 });
     skyDressing(ctx, { clouds: 3, y: -6, spread: 14 });
   },
   async intro(ctx) {
@@ -193,40 +197,68 @@ export const newborn = {
         await camFollow(me, 8);
       },
     },
+    {
+      id: 'diaper', kind: 'secret', label: 'A suspicious smell', at: [-3.0, 0.3], radius: 0.8, requires: ['holdNewborn'],
+      async run(ctx) {
+        const me = ctx.me;
+        await me.walkTo(-3.0, 0.35); me.face(-3.45, 0.2);
+        await say(ctx.sam, 'Oh — you’re volunteering? That’s so generous of you.');
+        await sequence({ label: 'Diaper duty. Quickly. Bravely.', keys: ['left', 'right', 'up', 'down', 'up'] });
+        await lower('Nobody tells you about this part either. You became an expert within a week.');
+        G.achieve?.('diaper');
+      },
+    },
     workMoment({ id: 'laptop', label: 'Answer emails', at: [3.3, 0.6], emails: 14, cost: 70, lines: ['Just ten minutes. Just the urgent ones.', 'They said it couldn’t wait.', 'One more. Then bed.'] }),
     {
       id: 'nightRocking', kind: 'story', label: 'It’s 3 a.m. — {child} is crying', at: [2.0, -1.5], requires: ['holdNewborn'], caption: 'Your mother’s song, now yours',
       async run(ctx) {
-        const me = ctx.me, sam = ctx.sam, baby = ctx.baby;
+        const me0 = ctx.me, sam = ctx.sam, baby = ctx.baby;
         sfx('cry');
         mood('nurseryNight', 3, { saturation: 0.85, vignette: 0.65 });
-        if (!me.carried) { await me.walkToChar(sam, 0.7); sam.putDown(me.position.x, me.position.z); me.pickUp(baby); }
+        const wake = await choose('3 a.m. Again.', ['Get up. You’ve got this.', 'Wake Sam. It’s their turn.']);
+        // whoever gets up does the rocking; the other one watches from the floor
+        const me = wake === 0 ? me0 : sam;
+        if (wake === 1) {
+          G.achieve?.('wake_sam'); G.state.flags.wokeSam = true;
+          await say(sam, 'Mm. Okay. Okay, I’m up. I’m up.');
+          if (me0.carried) { me0.putDown(me0.position.x, me0.position.z); }
+          sam.setPose('idle');
+          await sam.walkToChar(baby, 0.5); sam.pickUp(baby);
+          me0.walkTo(1.4, 0.2).then(() => { me0.setPose('sitGround'); me0.faceNow(2.4, -2.15); });
+        } else if (!me.carried) { if (sam.carried) { await me.walkToChar(sam, 0.7); sam.putDown(me.position.x, me.position.z); } else { await me.walkToChar(baby, 0.5); } me.pickUp(baby); }
         me.setPose('carry');
         sfx('cry', { delay: 1.5 });
         await me.walkTo(2.2, -1.6);
         me.place(2.4, -2.15, -0.7); me.setPose('rock');
         await camTo(2.3, -1.8, 4.6, 2);
-        await think('What did Mom do? What did she sing?');
-        await wait(0.6);
-        await lower('And then, from somewhere very deep, the song came back to you.');
+        if (wake === 0) {
+          await think(G.state.flags.calledFor === 'dad' ? 'What did Dad do? What did he sing?' : 'What did Mom do? What did she sing?');
+          await wait(0.6);
+          await lower('And then, from somewhere very deep, the song came back to you.');
+        } else {
+          await say(sam, 'Sing me the one your parents used to sing. I only know half.');
+          await lower('So you sang it, quietly, from the floor — and Sam rocked, and hummed along to the half they knew.');
+        }
         music('littleHum', { intensity: 0.5 });
         const chair = ctx.r.chair.userData.rock;
         let t = 0; const rocker = (dt) => { t += dt; const s = Math.sin(t * 2.0) * 0.09; chair.rotation.x = s; me.lean = s * 0.8; };
         G.updaters.add(rocker);
         await wait(1.2);
-        const singing = (async () => { for (const l of LULLABY_WORDS) await say(me, l, { passive: true, hold: 3.4, name: 'You' }); })();
+        const singing = (async () => { for (const l of LULLABY_WORDS) await say(me0, l, { passive: true, hold: 3.4, name: 'You' }); })();
         await rhythm({ label: 'Rock with the song — press on the first beat', hits: 4, onlyDownbeat: true, window: 0.3 });
         await singing;
         baby.setPose('sleep');
-        await keep('nightRocking', 'Your mother’s song, now yours');
+        await keep('nightRocking', wake === 0 ? 'Your mother’s song, now yours' : 'The song, in two voices');
+        G.achieve?.('your_song');
         G.updaters.delete(rocker); chair.rotation.x = 0; me.lean = 0;
-        await lower('You phoned your mother the next morning, just to tell her. She cried a little. So did you.');
+        await lower(`You phoned your ${G.state.flags.calledFor === 'dad' ? 'father' : 'mother'} the next morning, just to tell them. They cried a little. So did you.`);
         music('little', { intensity: 0.4 });
         mood('nurseryNight', 3);
         me.setPose('idle'); me.position.set(2.0, 0, -1.5);
         await me.walkTo(-1.9, -1.9);
         me.putDown(-2.5, -2.55); baby.setPose('sleep'); baby.extraY = 0.5;
-        await camFollow(me, 8);
+        if (wake === 1) { me0.setPose('idle'); sam.walkTo(-1.4, 2.7).then(() => { sam.setPose('sitGround'); sam.faceNow(0.5, 0); }); }
+        await camFollow(me0, 8);
       },
     },
     {
@@ -471,10 +503,12 @@ export const backyard = {
           kid.walkSpeed = 3.2; kid.walkTo(-10, 5.6);
           await lower('You let go. {They} didn’t even notice. {They} just kept going, and going.');
           await keep('bike', 'You let go. {They} didn’t notice.');
+          G.achieve?.('let_go'); G.state.flags.bike = 'letGo';
         } else {
           await riding; kid.walkSpeed = 3.2; kid.walkTo(-10, 5.6);
           await lower('You held on a few more metres. Then {they} pulled ahead on {their} own, and you were just holding air.');
           await keep('bike', 'You held on a little longer');
+          G.achieve?.('held_on'); G.state.flags.bike = 'heldOn';
         }
         await wait(1.5);
         kid.root.remove(bk); kid.setPose('idle'); kid.walkSpeed = 2.6;
@@ -558,6 +592,39 @@ export const backyard = {
       },
     },
     {
+      id: 'puppy', label: '{child} wants to ask you something', anchor: (ctx) => ctx.kid, offset: [0.5, 0, 0.5], requires: ['swing'], caption: 'The puppy question',
+      async run(ctx) {
+        const me = ctx.me, kid = ctx.kid;
+        await me.walkToChar(kid, 0.9); kid.faceChar(me);
+        await say(kid, 'Can we get a puppy? Please? I’ll walk it every day. Every single day. I promise.', { name: '{child}' });
+        const c = await choose('A puppy…', ['“…Okay. Yes.”', '“Maybe when you’re older.”']);
+        if (c === 0) {
+          G.state.flags.puppy = true; G.achieve?.('puppy');
+          kid.setPose('jump'); sfx('yay', { pitch: 1.2 }); await wait(1.2); kid.setPose('idle');
+          const pup = new Dog({ age: 0.5, color: 0xe8c08a }); pup.root.scale.setScalar(0.65); pup.name = 'Pancake';
+          pup.place(-5, 6.6); pup.follow(kid, 0.9); pup.wag = 2;
+          await lower('Two weeks later there was a puppy. {child} named it Pancake. {child} walked it every day for nearly a month.');
+          await lower('After that, you walked it. You didn’t mind. Biscuit would have liked it.');
+          await keep('puppy', 'Pancake comes home');
+        } else {
+          kid.setPose('sad'); await say(kid, 'That’s what you always say.', { name: '{child}' }); kid.setPose('idle');
+          await lower('{They} sulked for exactly eleven minutes. Then {they} found a frog, and named it Puppy.');
+          await keep('puppy', 'A frog named Puppy');
+        }
+      },
+    },
+    {
+      id: 'postcard', kind: 'secret', label: 'Check the mailbox', at: [-6.4, 5.8], radius: 0.8,
+      async run(ctx) {
+        const me = ctx.me;
+        await me.walkTo(-6.3, 5.8); me.face(-6.4, 6.4);
+        sfx('rustle');
+        await lower(`A postcard from the sea, in your ${G.state.flags.calledFor === 'dad' ? 'father' : 'mother'}’s handwriting:`);
+        await lower('“Wish you were here. The water is cold and your father refuses to admit it. Eat something green. Kiss {child} for us.”');
+        G.achieve?.('postcard');
+      },
+    },
+    {
       id: 'boss', kind: 'work', label: 'Your phone is ringing (the boss)', at: [-3.6, -1.6], radius: 1.0,
       async run(ctx) {
         const me = ctx.me;
@@ -567,6 +634,8 @@ export const backyard = {
         const c = await choose('Just for a few hours…', ['“Sure. I’ll be there.”', '“Not today. It’s Saturday.”']);
         if (c === 0) {
           G.state.stats.emails += 25; G.state.stats.workCalls++;
+          G.state.stats.workTimes = (G.state.stats.workTimes || 0) + 1;
+          if (G.state.stats.workTimes >= 5) G.achieve?.('workaholic');
           await fadeOut(1.2);
           ctx.passTime(140);
           const avail = ctx.world.hotspots.filter((x) => x.enabled && !x.done && (x.m?.kind ?? 'little') === 'little');
@@ -577,6 +646,7 @@ export const backyard = {
           mood('summerDay', 6);
         } else {
           G.state.flags.saidNo = true;
+          G.achieve?.('said_no');
           await say(me, 'Not today. It’s Saturday.');
           await lower('You turned the phone off and put it in a drawer. Nothing terrible happened. Nothing terrible ever did.');
         }
@@ -633,6 +703,7 @@ export const bedtime = {
     W.add(P.laptop(), 3.3, 0.8, { y: 0.75, ry: -Math.PI / 2 });
     // the drawing in a frame on the wall
     if (G.state.flags.drawing) { const fr = P.drawingPaper(familyDrawing()); W.add(fr, -3.9, 0.6, { y: 1.8, ry: Math.PI / 2 }); }
+    if (G.state.flags.puppy) { const pup = new Dog({ age: 3, color: 0xe8c08a }); pup.root.scale.setScalar(0.8); pup.place(-2.9, -0.95, Math.PI); pup.setPose('lie'); pup.extraY = 0.45; pup.update = ((u) => function (dt, t) { u.call(this, dt, t); this.root.position.y = 0.45; })(pup.update); }
   },
   async intro(ctx) {
     await fadeIn(3);
@@ -686,6 +757,19 @@ export const bedtime = {
         await keep('teddy', 'The bear with one ear');
       },
     },
+    {
+      id: 'wish', kind: 'secret', label: 'Was that a shooting star?', at: [1.2, -2.5], radius: 0.8,
+      async run(ctx) {
+        const me = ctx.me, W = ctx.world;
+        await me.walkTo(1.2, -2.45); me.face(1.2, -4);
+        const star = P.glowSprite(0xffffff, 0.5, 1); W.root.add(star);
+        await tween(1.4, (k) => { star.position.set(0.4 + k * 1.6, 2.4 - k * 0.6, -3.45); star.material.opacity = Math.sin(k * Math.PI); });
+        W.root.remove(star); sfx('sparkle');
+        await lower('You made a wish before you could stop yourself.');
+        await lower('More time. Everybody wishes for more time.');
+        G.achieve?.('wish');
+      },
+    },
     workMoment({ id: 'laptop', label: 'Finish the presentation', at: [3.3, 0.8], emails: 10, cost: 60, lines: ['It’s due tomorrow. It has to be tonight.', 'Just the last slide.'] }),
     {
       id: 'story', kind: 'story', label: 'Read the bedtime story', at: [-2.0, -1.0], caption: 'One more time. Always one more time.',
@@ -723,6 +807,8 @@ export const bedtime = {
         await me.walkTo(-2.0, -1.2); me.faceChar(kid);
         const c = await choose('“Will you always be here?”', ['“Always.”', '“As long as I possibly can.”', '“Even when you can’t see me.”']);
         G.state.flags.alwaysAnswer = ['Always.', 'As long as I possibly can.', 'Even when you can’t see me.'][c];
+        G.achieve?.('always');
+        if (G.ach?.remember('alwaysAnswers', c) >= 3) G.achieve?.('every_answer');
         await say(me, G.state.flags.alwaysAnswer);
         await say(kid, 'Okay.', { name: '{child}' });
         await lower('{They} believed you completely. That was the most frightening thing about it.');

@@ -63,6 +63,16 @@ export const prologue = {
       },
     },
     {
+      id: 'fridge', kind: 'secret', label: 'Something on the fridge', at: [-2.9, -1.5], radius: 0.8,
+      async run(ctx) {
+        const me = ctx.me;
+        await me.walkTo(-2.85, -1.4); me.face(-3.55, -1.9);
+        await lower('A fridge magnet shaped like a small brown dog. Chipped, faded, older than the fridge.');
+        await think('Biscuit. I haven’t thought about Biscuit in years.');
+        G.achieve?.('fridge');
+      },
+    },
+    {
       id: 'album', kind: 'story', label: 'Open the album', at: [0.4, 0.2], requires: [],
       async run(ctx) {
         const me = ctx.me;
