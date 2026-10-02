@@ -269,6 +269,8 @@ export class Character {
     }
   }
 
+  get hips() { return this.pelvis; } // older chapter scripts call it this
+
   // ---------------------------------------------------------------
   setAge(age) {
     this.age = age;

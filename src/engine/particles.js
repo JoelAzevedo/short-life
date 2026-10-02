@@ -3,14 +3,21 @@ import * as THREE from 'three';
 import { G, rng } from './game.js';
 import { glowTexture } from './props.js';
 
+// Point sizes are given in world units. Under the orthographic camera WebGL points are
+// sized in screen pixels, so we convert every frame using the current zoom.
+export function pixelsPerUnit() {
+  const R = G.renderer; if (!R) return 50;
+  return window.innerHeight / Math.max(0.01, R.camera.top - R.camera.bottom);
+}
+
 const KINDS = {
   petals: { color: [0xf7c0cf, 0xfbd8e2, 0xf3a8bd], size: 0.09, fall: 0.35, drift: 0.6, spin: 2, shape: 'flake', count: 120 },
   leaves: { color: [0xe39a3b, 0xd2603e, 0xeec04a, 0xc77a2a], size: 0.12, fall: 0.6, drift: 0.8, spin: 3, shape: 'flake', count: 110 },
   snow: { color: [0xffffff, 0xf2f6ff], size: 0.06, fall: 0.55, drift: 0.35, spin: 1, shape: 'flake', count: 260 },
   rain: { color: [0xbcd0e6], size: 0.02, fall: 9, drift: 0.05, spin: 0, shape: 'streak', count: 420 },
-  fireflies: { color: [0xf6ff9a, 0xdfff7a], size: 0.35, fall: 0, drift: 0.35, spin: 0, shape: 'glow', count: 40 },
-  motes: { color: [0xfff4d8], size: 0.14, fall: -0.02, drift: 0.12, spin: 0, shape: 'glow', count: 60 },
-  stars: { color: [0xffffff, 0xfff4d0, 0xd8e4ff], size: 0.3, fall: 0, drift: 0, spin: 0, shape: 'glow', count: 120 },
+  fireflies: { color: [0xf6ff9a, 0xdfff7a], size: 0.24, fall: 0, drift: 0.35, spin: 0, shape: 'glow', count: 40 },
+  motes: { color: [0xfff4d8], size: 0.1, fall: -0.02, drift: 0.12, spin: 0, shape: 'glow', count: 60 },
+  stars: { color: [0xffffff, 0xfff4d0, 0xd8e4ff], size: 0.09, fall: 0, drift: 0, spin: 0, shape: 'glow', count: 120 },
   bubbles: { color: [0xdff2ff, 0xf6e0ff], size: 0.28, fall: -0.4, drift: 0.5, spin: 0, shape: 'glow', count: 25 },
   memories: { color: [0xffe7b8, 0xffd0e0, 0xd8eaff], size: 0.5, fall: -0.25, drift: 0.3, spin: 0, shape: 'glow', count: 50 },
 };
@@ -41,7 +48,7 @@ export class ParticleField {
       const c = new THREE.Color();
       for (let i = 0; i < n; i++) { c.setHex(k.color[i % k.color.length]); cols.set([c.r, c.g, c.b], i * 3); }
       geo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
-      this.mat = new THREE.PointsMaterial({ size: k.size, map: glowTexture(), vertexColors: true, transparent: true, opacity: this.opacity, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true, fog: false });
+      this.mat = new THREE.PointsMaterial({ size: k.size * pixelsPerUnit(), map: glowTexture(), vertexColors: true, transparent: true, opacity: this.opacity, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: false, fog: false });
       this.obj = new THREE.Points(geo, this.mat);
       this.geo = geo;
     } else {
@@ -86,7 +93,8 @@ export class ParticleField {
         pos.setXYZ(i, c.x + this.p[i * 3], this.p[i * 3 + 1] - (1 - tw) * 0.0, c.z + this.p[i * 3 + 2]);
       }
       pos.needsUpdate = true;
-      if (this.kind === 'fireflies' || this.kind === 'stars') this.mat.size = k.size * (0.85 + 0.15 * Math.sin(t * 3));
+      const ppu = pixelsPerUnit();
+      this.mat.size = k.size * ppu * ((this.kind === 'fireflies' || this.kind === 'stars') ? (0.85 + 0.15 * Math.sin(t * 3)) : 1);
     } else {
       const d = this.dummy;
       for (let i = 0; i < n; i++) {
@@ -103,7 +111,8 @@ export class ParticleField {
 
 // one-shot burst of sparkles at a point (e.g. when a moment is kept)
 export class Burst {
-  constructor(pos, { color = 0xfff0c0, count = 40, speed = 2, life = 1.6, size = 0.3 } = {}) {
+  constructor(pos, { color = 0xfff0c0, count = 40, speed = 2, life = 1.6, size = 0.2 } = {}) {
+    this.size = size;
     this.life = life; this.t = 0; this.n = count;
     const geo = new THREE.BufferGeometry();
     this.p = new Float32Array(count * 3); this.v = new Float32Array(count * 3);
@@ -113,7 +122,7 @@ export class Burst {
       this.v.set([Math.cos(a) * Math.cos(e) * s, Math.abs(Math.sin(e)) * s + 0.5, Math.sin(a) * Math.cos(e) * s], i * 3);
     }
     geo.setAttribute('position', new THREE.BufferAttribute(this.p, 3));
-    this.mat = new THREE.PointsMaterial({ size, color, map: glowTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false });
+    this.mat = new THREE.PointsMaterial({ size: size * pixelsPerUnit(), color, map: glowTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: false, fog: false });
     this.obj = new THREE.Points(geo, this.mat); this.obj.frustumCulled = false;
     this.geo = geo;
   }
@@ -126,6 +135,7 @@ export class Burst {
       this.p[j] += this.v[j] * dt; this.p[j + 1] += this.v[j + 1] * dt; this.p[j + 2] += this.v[j + 2] * dt;
     }
     this.geo.attributes.position.needsUpdate = true;
+    this.mat.size = this.size * pixelsPerUnit();
     this.mat.opacity = Math.max(0, 1 - this.t / this.life);
     return this.t >= this.life;
   }
