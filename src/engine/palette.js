@@ -130,7 +130,7 @@ export const MOODS = {
     fill: 0x5a6090, fillIntensity: 0.4,
     skyTop: 0x161a30, skyBottom: 0x2d3150, fog: 0x262a45,
     sun: 0xa8b4ff, sunIntensity: 0.5, sunAz: 140, sunEl: 40,
-    hemiSky: 0x5a5f90, hemiGround: 0x3a3030, hemiIntensity: 0.6,
+    hemiSky: 0x5a5f90, hemiGround: 0x3a3030, hemiIntensity: 0.85, exposure: 1.12,
     saturation: 0.75, warmth: 0.35, vignette: 0.6, bloom: 0.75, tilt: 0.9,
   },
   black: {
