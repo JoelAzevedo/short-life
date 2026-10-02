@@ -27,7 +27,7 @@ export class Director {
   keepWindow() { return this.current?.keepWindow ?? KEEP_WINDOWS[this.current?.chapter ?? 0] ?? 7; }
   setControl(on) {
     this.control = on;
-    if (!on) { this.moveTarget = null; G.ui.setPrompt(null); if (G.player) G.player._playerMoving = false; }
+    if (!on) { this.moveTarget = null; this.vel = { x: 0, z: 0 }; G.ui.setPrompt(null); if (G.player) G.player._playerMoving = false; }
   }
   renderNow() { G.renderer.render(); }
 
@@ -44,6 +44,22 @@ export class Director {
       await this.runScene(def, token);
       if (token !== this.runToken) return;
       this.index++;
+      const next = this.scenes[this.index];
+      if (!next || next.chapter !== def.chapter) this.chapterDone(def.chapter, !next);
+    }
+  }
+
+  chapterDone(ch, last) {
+    if (ch >= 1 && ch <= 7) G.achieve?.('ch' + ch);
+    if (ch >= 1 && G.album.chapterComplete(ch)) G.achieve?.('present');
+    if (ch === 5) {
+      G.achieve?.(G.state.childKind === 'son' ? 'son' : 'daughter');
+      if ((G.state.stats.workTimes || 0) === (G.state.stats.workAtCh5 || 0)) G.achieve?.('unplugged');
+    }
+    if (last) {
+      G.achieve?.('the_end');
+      G.achieve?.(G.state.identity === 'father' ? 'as_father' : 'as_mother');
+      if (G.ach?.remember('identity', G.state.identity) >= 2) G.achieve?.('both_lives');
     }
   }
 
@@ -76,7 +92,7 @@ export class Director {
     if (def.mood) R.setMood(def.mood, 0);
     // moments
     for (const m of def.moments ?? []) {
-      if (m.caption) G.album.register(m.caption.id ?? m.id, def.chapter, fmt(m.caption.text ?? m.caption), def.id);
+      if (m.caption) G.album.register(m.caption.id ?? m.id, def.chapter, fmt(m.caption.text ?? m.caption), def.id, m.alt);
       const anchor = m.anchor ? m.anchor(ctx) : null;
       const h = world.hotspot({ id: m.id, label: m.label, kind: m.kind ?? 'little', x: m.at?.[0], z: m.at?.[1], radius: m.radius ?? 1.2, anchor, height: m.height, offset: m.offset, enabled: false });
       h.m = m;
@@ -105,7 +121,8 @@ export class Director {
     }
     this.setControl(false);
     // anything you didn't get to has passed
-    for (const h of world.hotspots) if (!h.done && h.m?.caption) G.album.lose(h.m.caption.id ?? h.m.id);
+    for (const h of world.hotspots) if (h.done && h.m) { (G.album.lived ??= new Set()).add(h.m.caption?.id ?? h.m.id); }
+    for (const h of world.hotspots) if (!h.done && !h.otherLife && h.m?.caption) G.album.lose(h.m.caption.id ?? h.m.id);
     if (def.outro) await this.safe(() => def.outro(ctx));
     if (token !== this.runToken) return;
     ui.clock(false);
@@ -138,6 +155,8 @@ export class Director {
     h.near = false;
     const m = h.m;
     if (m.once !== false) h.complete();
+    // choosing one path closes its alternatives
+    if (m.alt) for (const o of ctx.world.hotspots) if (o !== h && o.m?.alt === m.alt && !o.done) { o.setEnabled(false); o.done = true; o.otherLife = true; }
     try { await m.run(ctx, h); } catch (e) { console.error('[moment error]', m.id, e); }
     if (m.once === false) h.setEnabled(true);
     h.done = m.once !== false;
@@ -243,18 +262,29 @@ export class Director {
       if (d < stop) { this.moveTarget = null; }
       else { vx = dx / d; vz = dz / d; }
     }
-    if (vx || vz) {
-      const nx = p.position.x + vx * sp * dt, nz = p.position.z + vz * sp * dt;
+    // smooth acceleration; babies lurch forward in little crawl surges, toddlers wobble
+    let surge = 1;
+    if (p.age < 1.3) surge = 0.55 + 0.75 * Math.abs(Math.sin(p.walkPhase * 0.8));
+    else if (p.age < 2.6) surge = 0.8 + 0.25 * Math.abs(Math.sin(p.walkPhase));
+    const tvx = vx * sp * surge, tvz = vz * sp * surge;
+    const accel = (vx || vz) ? (p.age < 2.6 ? 6 : 10) : 12;
+    this.vel = this.vel || { x: 0, z: 0 };
+    this.vel.x += (tvx - this.vel.x) * (1 - Math.exp(-accel * dt));
+    this.vel.z += (tvz - this.vel.z) * (1 - Math.exp(-accel * dt));
+    const vmag = Math.hypot(this.vel.x, this.vel.z);
+    if (vmag > 0.03) {
+      const nx = p.position.x + this.vel.x * dt, nz = p.position.z + this.vel.z * dt;
       const r = G.world.resolve(nx, nz, p.radius);
       const moved = Math.hypot(r.x - p.position.x, r.z - p.position.z);
       // stuck against something while click-walking → give up
-      if (this.moveTarget && moved < sp * dt * 0.1) { this.stuck = (this.stuck || 0) + dt; if (this.stuck > 0.4) { this.moveTarget = null; this.stuck = 0; } } else this.stuck = 0;
+      if (this.moveTarget && moved < vmag * dt * 0.1) { this.stuck = (this.stuck || 0) + dt; if (this.stuck > 0.4) { this.moveTarget = null; this.stuck = 0; } } else this.stuck = 0;
+      if (dt > 0) { this.vel.x = (r.x - p.position.x) / dt; this.vel.z = (r.z - p.position.z) / dt; }
       p.position.x = r.x; p.position.z = r.z;
-      p.targetHeading = Math.atan2(vx, vz);
-      p.speed = sp; p._playerMoving = true;
-      this.stepT -= dt * sp;
+      if (vx || vz) p.targetHeading = Math.atan2(vx, vz);
+      p.speed = Math.max(vmag, (vx || vz) ? sp * 0.6 : 0); p._playerMoving = true;
+      this.stepT -= dt * vmag;
       if (this.stepT <= 0) { this.stepT = p.age < 1.3 ? 0.5 : 0.62; G.audio.sfx('step', { surface: this.current.surface ?? 'grass', vol: p.age < 3 ? 0.5 : 1 }); }
-    } else p._playerMoving = false;
+    } else { p._playerMoving = false; this.vel.x = this.vel.z = 0; }
   }
 
   // ---------- pause menu ----------
@@ -277,6 +307,9 @@ export class Director {
     slider('Music', 'music'); slider('Sound', 'sfx'); slider('Ambience', 'amb');
     const autoL = el('label', '', '<span>Auto-advance text</span>'); const cb = el('input'); cb.type = 'checkbox'; cb.checked = G.ui.settings.auto;
     cb.addEventListener('change', () => { G.ui.settings.auto = cb.checked; G.ui.saveSettings(); }); autoL.appendChild(cb); p.appendChild(autoL);
+    const aoL = el('label', '', '<span>Ambient occlusion (quality)</span>'); const ao = el('input'); ao.type = 'checkbox'; ao.checked = G.renderer.ao.enabled;
+    ao.addEventListener('change', () => G.renderer.setAO(ao.checked)); aoL.appendChild(ao); p.appendChild(aoL);
+    btn('Achievements', () => { this.closeMenu(); G.showAchievements?.(); });
     btn('Replay this scene', () => { this.closeMenu(); this.restartScene(); });
     btn('Return to title', () => { this.closeMenu(); this.onTitle && this.onTitle(); });
     p.appendChild(el('div', 'small', `${CHAPTER_NAMES[this.current.chapter] ?? ''}<br>Move: WASD / arrows / click · Interact: Space / click · Keep: hold Space`));

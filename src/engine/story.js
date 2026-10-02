@@ -87,6 +87,8 @@ export async function keep(id, caption, { window: win = null, chapter = null, fo
     const pp = G.player ? G.player.position.clone().add(new THREE.Vector3(0, 1, 0)) : R.camTarget.clone();
     G.world?.burst(pp, { count: 50, color: 0xffe4b0 });
     A.keep(id, caption, ch, img);
+    const n = A.count();
+    if (n >= 1) G.achieve?.('keep_1'); if (n >= 10) G.achieve?.('keep_10'); if (n >= 30) G.achieve?.('keep_30'); if (n >= 60) G.achieve?.('keep_60');
     k.classList.remove('show'); k.classList.add('hidden');
     ui.flyPolaroid(img, caption);
     await waitReal(0.4);

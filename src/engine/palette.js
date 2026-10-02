@@ -4,7 +4,8 @@
 export const MOOD_DEFAULT = {
   skyTop: 0xbfd8f0, skyBottom: 0xf7e6d8, fog: 0xf2e2d6, fogNear: 6, fogFar: 46,
   sun: 0xfff1dc, sunIntensity: 2.6, sunAz: 210, sunEl: 52,
-  hemiSky: 0xdfe9ff, hemiGround: 0xb59a86, hemiIntensity: 1.25,
+  hemiSky: 0xdfe9ff, hemiGround: 0xb59a86, hemiIntensity: 1.1,
+  fill: 0xa8bce8, fillIntensity: 0.55,
   exposure: 1.0,
   saturation: 1.0, contrast: 1.0, brightness: 0.0, warmth: 0.0,
   tint: 0xffffff, tintAmt: 0.0,
@@ -15,6 +16,7 @@ export const MOOD_DEFAULT = {
 
 export const MOODS = {
   dawnNursery: {
+    fill: 0xb8a8e8, fillIntensity: 0.5,
     skyTop: 0xf4c7c3, skyBottom: 0xfbe6d4, fog: 0xf7dccf,
     sun: 0xffd2b0, sunIntensity: 2.4, sunAz: 235, sunEl: 28,
     hemiSky: 0xffe0e6, hemiGround: 0xc49a8c, hemiIntensity: 1.35,
@@ -33,18 +35,21 @@ export const MOODS = {
     saturation: 1.18, contrast: 1.04, warmth: 0.1, vignette: 0.28, bloom: 0.26, tilt: 0.6,
   },
   summerDusk: {
+    fill: 0x8a8ae0, fillIntensity: 0.55,
     skyTop: 0x5b5f9e, skyBottom: 0xf6b98a, fog: 0xe8a98a,
     sun: 0xffb27a, sunIntensity: 2.1, sunAz: 250, sunEl: 14,
     hemiSky: 0x9c8fd0, hemiGround: 0x8b6a5a, hemiIntensity: 1.1,
     saturation: 1.1, warmth: 0.45, vignette: 0.42, bloom: 0.45, tilt: 0.75,
   },
   summerNight: {
+    fill: 0x5a6ad8, fillIntensity: 0.5,
     skyTop: 0x141a3a, skyBottom: 0x3a3f72, fog: 0x2c3263,
     sun: 0x9fb4ff, sunIntensity: 0.9, sunAz: 140, sunEl: 40,
     hemiSky: 0x5a66b0, hemiGround: 0x2a2440, hemiIntensity: 0.9,
     saturation: 0.95, warmth: -0.1, vignette: 0.55, bloom: 0.7, tilt: 0.8,
   },
   goldenAfternoon: {
+    fill: 0x9ab4f0, fillIntensity: 0.6,
     skyTop: 0x8fb8e6, skyBottom: 0xffdcae, fog: 0xf8d9b4,
     sun: 0xffcf8c, sunIntensity: 3.0, sunAz: 240, sunEl: 30,
     hemiSky: 0xfde3c0, hemiGround: 0xa08060, hemiIntensity: 1.2,
@@ -57,12 +62,14 @@ export const MOODS = {
     saturation: 0.55, contrast: 0.95, warmth: -0.25, vignette: 0.5, bloom: 0.15, tilt: 0.7,
   },
   autumnEvening: {
+    fill: 0x7a8ae0, fillIntensity: 0.6,
     skyTop: 0x3d3a6b, skyBottom: 0xf39a6b, fog: 0xd9876a,
     sun: 0xff9f6a, sunIntensity: 1.9, sunAz: 255, sunEl: 12,
     hemiSky: 0x8f7cc0, hemiGround: 0x7a5040, hemiIntensity: 1.05,
     saturation: 1.15, warmth: 0.5, vignette: 0.45, bloom: 0.6, tilt: 0.7,
   },
   festivalNight: {
+    fill: 0x7a5ad0, fillIntensity: 0.55,
     skyTop: 0x101436, skyBottom: 0x3b2d5c, fog: 0x2e2650,
     sun: 0xa3a8ff, sunIntensity: 0.7, sunAz: 130, sunEl: 45,
     hemiSky: 0x6a5aa8, hemiGround: 0x3a2a3a, hemiIntensity: 0.95,
@@ -75,6 +82,7 @@ export const MOODS = {
     saturation: 1.08, warmth: 0.25, vignette: 0.3, bloom: 0.45, tilt: 0.7, dream: 0.15,
   },
   nurseryNight: {
+    fill: 0x5a6ad0, fillIntensity: 0.45,
     skyTop: 0x1d2448, skyBottom: 0x3d4a7a, fog: 0x2e3866,
     sun: 0x8ea6ff, sunIntensity: 0.55, sunAz: 140, sunEl: 40,
     hemiSky: 0x6070b8, hemiGround: 0x3a3048, hemiIntensity: 0.75,
@@ -105,6 +113,7 @@ export const MOODS = {
     saturation: 0.35, contrast: 0.98, warmth: -0.2, vignette: 0.45, bloom: 0.3, tilt: 0.8,
   },
   winterDusk: {
+    fill: 0x8a9ad8, fillIntensity: 0.55,
     skyTop: 0x37406a, skyBottom: 0xd9a8a0, fog: 0xbfa6aa,
     sun: 0xffc2a0, sunIntensity: 1.6, sunAz: 250, sunEl: 10,
     hemiSky: 0x9aa4d0, hemiGround: 0x9090a0, hemiIntensity: 1.2,
@@ -118,6 +127,7 @@ export const MOODS = {
     fogNear: 2, fogFar: 34,
   },
   kitchenNight: {
+    fill: 0x5a6090, fillIntensity: 0.4,
     skyTop: 0x161a30, skyBottom: 0x2d3150, fog: 0x262a45,
     sun: 0xa8b4ff, sunIntensity: 0.5, sunAz: 140, sunEl: 40,
     hemiSky: 0x5a5f90, hemiGround: 0x3a3030, hemiIntensity: 0.6,

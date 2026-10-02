@@ -10,6 +10,7 @@ import { Director } from './engine/director.js';
 import { World } from './engine/world.js';
 import * as P from './engine/props.js';
 import { SCENES } from './chapters/index.js';
+import { Achievements, watchKonami } from './engine/achievements.js';
 
 function boot() {
   const params = new URLSearchParams(location.search);
@@ -19,16 +20,20 @@ function boot() {
   G.autoSkip = params.has('skiplittle');
   G.log = [];
   G.renderer = new Renderer(document.getElementById('game'));
-  if (params.has('lowfx')) { G.renderer.r.setPixelRatio(0.5); G.renderer.r.shadowMap.enabled = false; G.renderer.bloom.enabled = false; G.renderer.resize(); }
+  if (params.has('lowfx')) { G.renderer.r.setPixelRatio(0.5); G.renderer.r.shadowMap.enabled = false; G.renderer.bloom.enabled = false; G.renderer.ao.enabled = false; G.renderer.resize(); }
   G.scene = G.renderer.scene; G.camera = G.renderer.camera;
   G.input = new Input(G.renderer.r.domElement);
   G.ui = new UI();
   G.audio = new Audio();
   G.album = new Album();
   G.director = new Director(SCENES);
+  G.ach = new Achievements();
+  G.achieve = (id, title, desc, cat) => G.ach.unlock(id, title, desc, cat);
+  G.showAchievements = () => G.ach.show();
+  watchKonami(() => partyHats());
   G.director.onTitle = () => { G.director.abort(); title(); };
   // register every moment up front so the album knows what could have been
-  for (const s of SCENES) for (const m of s.moments ?? []) if (m.caption) G.album.register(m.caption.id ?? m.id, s.chapter, typeof m.caption === 'string' ? m.caption : m.caption.text, s.id);
+  for (const s of SCENES) for (const m of s.moments ?? []) if (m.caption) G.album.register(m.caption.id ?? m.id, s.chapter, typeof m.caption === 'string' ? m.caption : m.caption.text, s.id, m.alt);
   for (const s of SCENES) (s.extraMoments ?? []).forEach(([id, cap]) => G.album.register(id, s.chapter, cap, s.id));
 
   document.getElementById('menuBtn').addEventListener('click', () => G.director.toggleMenu());
@@ -58,6 +63,7 @@ function boot() {
   };
   requestAnimationFrame(frame);
 
+  if (params.has('lineup')) { lineup(params.get('lineup')); return; }
   // debug: jump straight to a scene (?scene=ch5-nursery or ?s=7)
   const sp = params.get('scene') ?? params.get('s');
   if (sp !== null) {
@@ -83,7 +89,7 @@ function buildTitleWorld() {
   const W = new World({ name: 'title' });
   G.world = W; titleWorld = W;
   W.add(P.island({ w: 9, d: 9, h: 1, top: P.C.grassSpring, seed: 8 }), 0, 0);
-  W.add(P.familyTree({ stage: 3, season: 'spring', swing: true }), 0.6, -0.8);
+  const ft = P.familyTree({ stage: 3, season: 'spring', swing: true }); W.add(ft, 0.6, -0.8); titleSwing = ft.userData.swing; titleSwingPush = 0;
   W.add(P.bench(), -1.6, 1.4, { ry: 0.6 });
   const r = rng(4);
   for (let i = 0; i < 30; i++) W.add(P.grassTuft(P.C.grassDark, i), r.range(-4, 4), r.range(-4, 4));
@@ -97,7 +103,25 @@ function buildTitleWorld() {
   R.setFollow(null); R.camGoal.set(0, 0.6, 0); R.zoomGoal = 11.5; R.camBounds = null; R.snapCamera();
   R.setMood('dawnNursery', 0, { dream: 0.35, tilt: 0.8 });
 }
-function titleUpdate(dt) { titleT += dt; G.renderer.camAz = 45 + Math.sin(titleT * 0.05) * 25; }
+let titleSwing = null, titleSwingPush = 0;
+function titleUpdate(dt) {
+  titleT += dt; G.renderer.camAz = 45 + Math.sin(titleT * 0.05) * 25;
+  if (titleSwing && titleSwingPush > 0) { titleSwing.rotation.x = Math.sin(titleT * 2.6) * 0.6 * titleSwingPush; }
+}
+
+// ↑↑↓↓←→←→BA — everybody gets a party hat
+function partyHats() {
+  if (!G.world) return;
+  for (const c of G.world.characters) {
+    if (!c.head || c._partyHat) continue;
+    const hat = P.cone(0.55, 1.2, 8, [0xf26b8a, 0x6fc3df, 0xf3c64a, 0x8ad08a][Math.floor(Math.random() * 4)]);
+    hat.position.y = 0.75; hat.rotation.z = 0.15; c.head.add(hat); c._partyHat = hat;
+    const pom = P.sphere(0.18, 6, 4, 0xffffff); pom.position.y = 1.2; hat.add(pom);
+  }
+  if (G.player) G.world.burst(G.player.position.clone().setY(1.5), { count: 80, color: 0xffd0e0, speed: 3 });
+  G.audio.sfx('sparkle'); G.audio.sfx('yay');
+  G.achieve('konami');
+}
 
 function title() {
   G.director.current = null;
@@ -117,6 +141,12 @@ function title() {
     cont.addEventListener('click', () => { G.audio.init(); G.album.load(save); start(save.sceneIndex); });
     btns.insertBefore(cont, begin);
   }
+  const achB = el('button', 'ghost', 'Achievements'); achB.addEventListener('click', () => G.ach.show()); btns.appendChild(achB);
+  let titleClicks = 0;
+  t.querySelector('h1').style.pointerEvents = 'auto'; t.querySelector('h1').style.cursor = 'pointer';
+  t.querySelector('h1').addEventListener('click', () => {
+    if (++titleClicks === 5 && titleSwing) { titleSwingPush = 1; G.audio.sfx('giggle'); G.achieve('title_swing'); }
+  });
   t.appendChild(el('div', 'foot', 'Best with headphones · about two to three hours, in chapters · progress saves itself<br>WASD / arrows / click to move · Space to interact · hold Space to keep a moment · Esc to pause'));
   const onFirst = () => { G.audio.init(); G.audio.music('title', { intensity: 0.3 }); G.audio.ambience({ birds: 0.4, wind: 0.2 }); };
   window.addEventListener('pointerdown', onFirst, { once: true });
@@ -130,7 +160,8 @@ function title() {
     who.appendChild(m); who.appendChild(f);
     const pick = (id) => {
       G.album.wipe();
-      G.state.identity = id; G.state.flags = {}; G.state.stats = { emails: 0, workCalls: 0 };
+      G.state.identity = id; G.state.flags = {}; G.state.stats = { emails: 0, workCalls: 0, workTimes: 0 };
+      G.achieve('begin');
       start(0);
     };
     m.addEventListener('click', () => pick('mother')); f.addEventListener('click', () => pick('father'));
@@ -144,6 +175,30 @@ async function start(index) {
   if (titleWorld) { titleWorld.dispose(); titleWorld = null; G.world = null; }
   G.renderer.camAz = 45;
   G.director.start(index);
+}
+
+// debug: a row of characters to inspect the models
+async function lineup(mode) {
+  const { Character, LOOKS, youLook, childLook, Dog } = await import('./engine/character.js');
+  G.ui.fade(0, 0.1);
+  const W = new World({ name: 'lineup' }); G.world = W;
+  W.add(P.island({ w: 14, d: 8, top: P.C.grassSpring }), 0, 0);
+  const list = [
+    [LOOKS.baby, 0.7, mode === 'pose' ? 'crawl' : 'sitGround'], [childLook(1.5), 1.5, 'idle'], [LOOKS.pip, 5, 'idle'], [LOOKS.childDaughter, 8, 'idle'],
+    [LOOKS.theo, 13, 'idle'], [LOOKS.youMother, 28, 'idle'], [LOOKS.youFather, 30, 'idle'], [LOOKS.sam, 30, 'idle'],
+    [LOOKS.mom, 34, 'idle'], [LOOKS.dad, 36, 'idle'], [LOOKS.grandma, 70, 'idle'], [LOOKS.grandpa, 75, 'idle'],
+  ];
+  list.forEach(([look, age, pose], i) => {
+    const c = new Character({ ...look, age });
+    c.place(-5.5 + i * 1.0, 0.5, 0.35);
+    c.setPose(mode === 'walk' ? 'idle' : pose);
+    if (mode === 'walk') { c.speed = c.walkSpeed; c._playerMoving = true; }
+    if (mode === 'pose') c.setPose(['crawl', 'walk', 'jump', 'wave', 'kneelOpen', 'carry', 'hug', 'sit', 'cry', 'laugh', 'think', 'crouch'][i], { h: 0.45 });
+    if (mode === 'pose' && i < 2) { c.speed = c.walkSpeed; c._playerMoving = true; }
+  });
+  const d = new Dog(); d.place(5.6, 1.6);
+  const R = G.renderer; R.setFollow(null); const cx = parseFloat(new URLSearchParams(location.search).get('cx') || '0'); R.camGoal.set(cx, 0.9, 0.5 + cx * 0.35); R.zoomGoal = parseFloat(new URLSearchParams(location.search).get('zoom') || '6'); R.snapCamera();
+  R.setMood('springMorning', 0);
 }
 
 window.addEventListener('DOMContentLoaded', boot);

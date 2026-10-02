@@ -17,7 +17,17 @@ export class Album {
     this.open = false;
     this.tab = 1;
   }
-  register(id, chapter, caption, scene) { if (!this.registry.has(id)) this.registry.set(id, { id, chapter, caption, scene }); }
+  register(id, chapter, caption, scene, alt = null) { if (!this.registry.has(id)) this.registry.set(id, { id, chapter, caption, scene, alt }); }
+  // alternate-path moments: once one of a group is kept, the others belong to another life
+  isOtherLife(id) {
+    const r = this.registry.get(id); if (!r?.alt || this.kept.has(id)) return false;
+    for (const [k, v] of this.registry) if (k !== id && v.alt === r.alt && (this.kept.has(k) || this.lived?.has(k))) return true;
+    return false;
+  }
+  chapterComplete(ch) {
+    const ms = [...this.registry.values()].filter((r) => r.chapter === ch && !this.isOtherLife(r.id));
+    return ms.length > 0 && ms.every((r) => this.kept.has(r.id));
+  }
   count() { return this.kept.size; }
   has(id) { return this.kept.has(id); }
   keep(id, caption, chapter, img) {
@@ -25,7 +35,7 @@ export class Album {
     this.lost.delete(id);
     try { if (img) localStorage.setItem(IMG_KEY + id, img); } catch (e) { /* storage full: caption survives */ }
   }
-  lose(id) { if (!this.kept.has(id)) this.lost.add(id); }
+  lose(id) { if (!this.kept.has(id) && !this.isOtherLife(id)) { this.lost.add(id); G.achieve?.('passed'); } }
   keptIn(chapter) { return [...this.kept.entries()].filter(([, v]) => v.chapter === chapter); }
 
   // ---------- save / load ----------
@@ -91,7 +101,7 @@ export class Album {
     const ids = new Set(moments.map((m) => m.id));
     for (const [id, v] of this.kept) if (v.chapter === this.tab && !ids.has(id)) moments.push({ id, chapter: v.chapter, caption: v.caption });
     let i = 0;
-    for (const m of moments) {
+    for (const m of moments.filter((x) => !this.isOtherLife(x.id))) {
       const k = this.kept.get(m.id);
       const p = el('div', 'polaroid' + (k ? '' : ' empty'));
       p.style.setProperty('--r', ((i++ * 37) % 9 - 4) * 0.8 + 'deg');

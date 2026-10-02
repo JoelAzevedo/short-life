@@ -106,7 +106,7 @@ export class World {
 }
 
 // ---------- interactive moments ----------
-const HOT_COLORS = { little: 0xfff2d2, story: 0xffc96b, work: 0x8fc4ff, exit: 0xffffff, quiet: 0xd8e6ff };
+const HOT_COLORS = { little: 0xfff2d2, story: 0xffc96b, work: 0x8fc4ff, exit: 0xffffff, quiet: 0xd8e6ff, secret: 0xe8d8ff };
 export class Hotspot {
   constructor(world, def) {
     this.world = world;
@@ -160,6 +160,7 @@ export class Hotspot {
     this.ring.scale.setScalar(1 + (this.near ? 0.15 * Math.sin(this.t * 4) : 0));
     this.obj.visible = this.alpha > 0.01;
     this.ring.visible = this.obj.visible;
+    if (this.kind === 'secret') { this.obj.visible = this.near; this.ring.visible = false; this.glow.material.opacity *= 0.5; }
   }
   destroy() { this.obj.parent?.remove(this.obj); this.ring.parent?.remove(this.ring); }
 }

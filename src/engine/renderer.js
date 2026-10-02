@@ -5,6 +5,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { G, clamp, lerp, damp, tween } from './game.js';
 import { MOOD_DEFAULT, MOODS } from './palette.js';
 
@@ -122,10 +123,22 @@ export class Renderer {
     this.sun.shadow.radius = 3;
     const sc = this.sun.shadow.camera; sc.left = -22; sc.right = 22; sc.top = 22; sc.bottom = -22; sc.near = 1; sc.far = 120;
     this.scene.add(this.sun); this.scene.add(this.sun.target);
+    // cool fill / rim light opposite the warm key — the classic low-poly lighting recipe
+    this.fill = new THREE.DirectionalLight(0x9fb4e8, 0.5);
+    this.scene.add(this.fill); this.scene.add(this.fill.target);
 
     // post
     const composer = new EffectComposer(r);
     composer.addPass(new RenderPass(this.scene, this.camera));
+    // ambient occlusion grounds every object (toggle in the pause menu)
+    this.ao = new GTAOPass(this.scene, this.camera, window.innerWidth, window.innerHeight);
+    this.ao.updateGtaoMaterial({ radius: 0.55, distanceExponent: 1.6, thickness: 2.0, scale: 1.25, samples: 12, distanceFallOff: 1 });
+    this.ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 12 });
+    this.ao.blendIntensity = 0.85;
+    let aoOn = !('ontouchstart' in window);
+    try { const v = localStorage.getItem('lm.ao'); if (v !== null) aoOn = v === '1'; } catch (e) { /* ignore */ }
+    this.ao.enabled = aoOn;
+    composer.addPass(this.ao);
     this.bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2), 0.3, 0.55, 0.82);
     composer.addPass(this.bloom);
     composer.addPass(new OutputPass());
@@ -151,7 +164,8 @@ export class Renderer {
     return o;
   }
   _clone(m) { const o = {}; for (const k in m) o[k] = m[k] instanceof THREE.Color ? m[k].clone() : m[k]; return o; }
-  static isColorKey(k) { return ['skyTop', 'skyBottom', 'fog', 'sun', 'hemiSky', 'hemiGround', 'tint'].includes(k); }
+  static isColorKey(k) { return ['skyTop', 'skyBottom', 'fog', 'sun', 'hemiSky', 'hemiGround', 'tint', 'fill'].includes(k); }
+  setAO(on) { this.ao.enabled = on; try { localStorage.setItem('lm.ao', on ? '1' : '0'); } catch (e) { /* ignore */ } }
 
   // mood can be a preset name, an object, or a preset name + overrides
   setMood(mood, seconds = 2, extra = null) {
@@ -195,6 +209,7 @@ export class Renderer {
       this.skyTex.needsUpdate = true;
       this.scene.fog.color.copy(m.fog);
       this.sun.color.copy(m.sun);
+      if (m.fill) this.fill.color.copy(m.fill);
       this.hemi.color.copy(m.hemiSky);
       this.hemi.groundColor.copy(m.hemiGround);
     }
@@ -202,6 +217,7 @@ export class Renderer {
     this.scene.fog.near = this.camDist + m.fogNear * fs;
     this.scene.fog.far = this.camDist + m.fogFar * fs;
     this.sun.intensity = m.sunIntensity * (o.light ?? 1);
+    this.fill.intensity = (m.fillIntensity ?? 0.5) * (o.light ?? 1);
     this.hemi.intensity = m.hemiIntensity * (o.light ?? 1);
     this.r.toneMappingExposure = m.exposure;
     const u = this.grade.uniforms;
@@ -310,6 +326,9 @@ export class Renderer {
     const sdir = new THREE.Vector3(Math.sin(saz) * Math.cos(sel), Math.sin(sel), Math.cos(saz) * Math.cos(sel));
     this.sun.position.copy(this.camTarget).addScaledVector(sdir, 50);
     this.sun.target.position.copy(this.camTarget);
+    const faz = saz + Math.PI, fel = THREE.MathUtils.degToRad(28);
+    this.fill.position.copy(this.camTarget).add(new THREE.Vector3(Math.sin(faz) * Math.cos(fel), Math.sin(fel), Math.cos(faz) * Math.cos(fel)).multiplyScalar(50));
+    this.fill.target.position.copy(this.camTarget);
     const ss = Math.max(14, this.viewSize * 1.25);
     const sc = this.sun.shadow.camera;
     if (Math.abs(sc.right - ss) > 0.5) { sc.left = -ss; sc.right = ss; sc.top = ss; sc.bottom = -ss; sc.updateProjectionMatrix(); }

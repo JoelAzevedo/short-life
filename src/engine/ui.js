@@ -182,10 +182,10 @@ export class UI {
     this.promptTarget = h;
     if (!h) { this.promptEl.classList.add('hidden'); return; }
     this.promptEl.classList.remove('hidden');
-    this.promptEl.className = h.kind === 'work' ? 'work' : h.kind === 'story' ? 'story' : '';
+    this.promptEl.className = h.kind === 'work' ? 'work' : h.kind === 'story' ? 'story' : h.kind === 'secret' ? 'secret' : '';
     const key = G.input.lastDevice === 'touch' ? 'Tap' : 'Space';
     this.promptEl.querySelector('.key').textContent = key;
-    this.promptEl.querySelector('.txt').textContent = fmt(h.label);
+    this.promptEl.querySelector('.txt').textContent = (h.kind === 'secret' ? '✦ ' : '') + fmt(h.label);
   }
 
   // ---------- HUD ----------
