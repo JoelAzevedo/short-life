@@ -402,7 +402,7 @@
   {
     "apiName": "ACH_FAIRY_DOOR",
     "id": "fairy_door",
-    "displayName": "Knock Knock",
+    "displayName": "Who Lives Here?",
     "description": "Find the tiny door at the foot of the cherry tree.",
     "hidden": true,
     "category": "egg"
@@ -524,6 +524,230 @@
     "id": "end_to_end",
     "displayName": "End to End",
     "description": "Ride the whole street, from one edge of town to the other.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_C4_MARRIED",
+    "id": "c4_married",
+    "displayName": "I Do",
+    "description": "Say your vows under the family tree.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_C4_FIRST_DANCE",
+    "id": "c4_first_dance",
+    "displayName": "Badly, Together",
+    "description": "Share a first dance with Sam.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_C4_LANTERN",
+    "id": "c4_lantern",
+    "displayName": "Same Time Next Year",
+    "description": "Release a lantern over the lake with Sam.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_C4_GROUP_PHOTO",
+    "id": "c4_group_photo",
+    "displayName": "Everyone, All at Once",
+    "description": "Get everyone you love into one photograph.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_C4_SMALL_FEET",
+    "id": "c4_small_feet",
+    "displayName": "Small Feet",
+    "description": "Be given the keys to the house you grew up in.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_C4_WINGMAN",
+    "id": "c4_wingman",
+    "displayName": "Wingman",
+    "description": "Go to the lantern festival with Theo.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C4_ALONE",
+    "id": "c4_alone",
+    "displayName": "Is This Seat Taken?",
+    "description": "Go to the festival alone — and be found.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C4_HELLO_AGAIN",
+    "id": "c4_hello_again",
+    "displayName": "Hello Again",
+    "description": "Recognise Sam from the ice-cream cart, ten years later.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C4_HELLO_STRANGER",
+    "id": "c4_hello_stranger",
+    "displayName": "Hello, Stranger",
+    "description": "Meet Sam at the lantern festival.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C4_RING_TOSS",
+    "id": "c4_ring_toss",
+    "displayName": "Nobody Ever Wins",
+    "description": "Actually win the ring toss.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C4_UGLY_FROG",
+    "id": "c4_ugly_frog",
+    "displayName": "Kept for Forty Years",
+    "description": "Take home the ugliest prize at the festival.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C4_DANCE_SAM",
+    "id": "c4_dance_sam",
+    "displayName": "Still Can’t Dance",
+    "description": "Give Sam the first dance at the wedding.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C4_DANCE_PARENT",
+    "id": "c4_dance_parent",
+    "displayName": "Standing on Their Feet",
+    "description": "Give your parent the first dance at the wedding.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C4_DANCE_GRANDMA",
+    "id": "c4_dance_grandma",
+    "displayName": "One for Grandpa",
+    "description": "Give Grandma the first dance at the wedding.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C4_ELEVEN_PAGES",
+    "id": "c4_eleven_pages",
+    "displayName": "All Eleven Pages",
+    "description": "Let Theo read his entire wedding speech.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C4_HEDGEHOG",
+    "id": "c4_hedgehog",
+    "displayName": "Small and Prickly",
+    "description": "Find the hedgehog hiding under the trees.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_C4_TAMBOURINE",
+    "id": "c4_tambourine",
+    "displayName": "Uninvited Percussion",
+    "description": "Join the band. Nobody asked you to.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_C4_BISCUIT_BALL",
+    "id": "c4_biscuit_ball",
+    "displayName": "Good Dog",
+    "description": "Find Biscuit’s old ball under the hedge.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_C4_CAKE_THIEF",
+    "id": "c4_cake_thief",
+    "displayName": "Cake Thief",
+    "description": "Taste the wedding cake before anyone else.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_C6_EMPTY_ROOM",
+    "id": "c6_empty_room",
+    "displayName": "You Wished for Quiet",
+    "description": "Stand in the empty room.",
+    "hidden": false,
+    "category": "story"
+  },
+  {
+    "apiName": "ACH_C6_PAYING_ATTENTION",
+    "id": "c6_paying_attention",
+    "displayName": "Paying Attention",
+    "description": "Keep eight or more moments while the years fly by.",
+    "hidden": false,
+    "category": "album"
+  },
+  {
+    "apiName": "ACH_C6_DOOR_KNOCK",
+    "id": "c6_door_knock",
+    "displayName": "Knock Knock",
+    "description": "Knock on the slammed door.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C6_DOOR_WAIT",
+    "id": "c6_door_wait",
+    "displayName": "From the Other Side",
+    "description": "Wait outside the slammed door until they knock first.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C6_READ_IT_AGAIN",
+    "id": "c6_read_it_again",
+    "displayName": "Read It Again",
+    "description": "Read your teenager one last bedtime story.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C6_DROVE",
+    "id": "c6_drove",
+    "displayName": "Four Hours Each Way",
+    "description": "Drive your child to college yourself.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C6_CURB",
+    "id": "c6_curb",
+    "displayName": "Call Me When You Get There",
+    "description": "Say goodbye at the curb and watch them drive away.",
+    "hidden": true,
+    "category": "path"
+  },
+  {
+    "apiName": "ACH_C6_BISCUIT_STONE",
+    "id": "c6_biscuit_stone",
+    "displayName": "Good Dog, Always",
+    "description": "Visit Biscuit’s stone under the cherry tree.",
+    "hidden": true,
+    "category": "egg"
+  },
+  {
+    "apiName": "ACH_C6_CEILING_STARS",
+    "id": "c6_ceiling_stars",
+    "displayName": "Their Ceiling",
+    "description": "Lie on their bed and see what they saw every night.",
     "hidden": true,
     "category": "egg"
   },
